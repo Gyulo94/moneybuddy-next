@@ -1,14 +1,79 @@
-import { Button } from "@/components/ui/button";
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import SubmitButton from "@/components/ui/submit-button";
+import { checkOauth, validateLoginForm } from "@/lib/actions/auth.actions";
 import { cn } from "@/lib/utils";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import GoogleLoginButton from "./google-login-button";
+import KakaoLoginButton from "./kakao-login-button";
+
+interface State {
+  message?: string;
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [state, setState] = useState<State>({});
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target as HTMLFormElement);
+    console.log("formdata", formData);
+    const validationResult = await validateLoginForm(formData);
+
+    if (validationResult?.error) {
+      setState(validationResult);
+      return;
+    }
+
+    const email = validationResult?.data?.email;
+    const password = validationResult?.data?.password;
+
+    if (!email) {
+      setState({ message: "이메일을 입력하세요." });
+      return;
+    }
+    const oauthCheck = await checkOauth(email);
+    console.log("oauthCheck", oauthCheck);
+
+    if (oauthCheck.status === "error") {
+      toast.error(oauthCheck.message);
+      return;
+    }
+
+    if (oauthCheck.status === "success") {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.status === 401) {
+        setState({
+          message: "이메일 또는 비밀번호가 일치하지 않습니다.",
+        });
+      }
+
+      if (session && session.user && session?.user.isEmailVerified === false) {
+        router.push("/verification");
+      }
+
+      if (result?.status === 200) {
+        router.push("/check");
+      }
+    }
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -16,77 +81,45 @@ export function LoginForm({
           <CardTitle className="text-2xl">로그인</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">이메일</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
+                <Input id="email" type="email" name="email" />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">비밀번호</Label>
                   <a
-                    href="#"
+                    href="/find-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     비밀번호를 잊으셨나요?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" name="password" />
               </div>
-              <Button type="submit" className="w-full">
-                로그인
-              </Button>
+              {state?.message && (
+                <p className="text-sm text-red-500 text-center">
+                  {state.message}
+                </p>
+              )}
+              <SubmitButton>로그인</SubmitButton>
 
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  소셜 로그인
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full cursor-pointer">
-                  <svg
-                    width="800"
-                    height="800"
-                    viewBox="0 0 800 800"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clip-path="url(#clip0_2_13)">
-                      <path
-                        d="M429.441 85C498.011 85 561.431 98.3331 619.702 124.999C677.972 151.665 724.039 187.926 757.9 233.781C791.763 279.636 808.694 329.652 808.694 383.831C808.694 438.009 791.763 488.097 757.9 534.094C724.039 580.089 678.042 616.42 619.914 643.086C561.784 669.751 498.292 683.086 429.441 683.086C407.712 683.086 385.278 681.533 362.141 678.43C261.683 748.128 208.209 783.402 201.719 784.247C198.616 785.377 195.653 785.236 192.831 783.825C191.702 782.978 190.855 781.848 190.291 780.437C189.727 779.026 189.444 777.758 189.444 776.628V774.936C191.138 763.93 203.977 718.077 227.963 637.372C173.501 610.283 130.257 574.375 98.2291 529.648C66.2014 484.923 50.1875 436.317 50.1875 383.831C50.1875 329.652 67.1184 279.636 100.98 233.781C134.842 187.926 180.908 151.665 239.18 124.999C297.45 98.3331 360.87 85 429.441 85ZM237.275 462.983V333.037H270.713C275.228 333.037 279.955 331.416 284.892 328.17C289.831 324.925 292.3 320.481 292.3 314.837C292.3 309.194 290.042 304.467 285.528 300.658C281.012 296.848 276.639 294.944 272.406 294.944H162.355C157.558 294.944 153.043 296.355 148.81 299.177C144.577 301.998 142.461 306.655 142.461 313.144C142.461 319.634 144.719 324.573 149.233 327.959C153.748 331.345 158.828 333.037 164.471 333.037H197.909V462.983C197.909 470.037 199.603 475.822 202.989 480.337C206.375 484.852 211.172 487.109 217.38 487.109C223.589 487.109 228.456 484.57 231.983 479.491C235.511 474.411 237.275 468.909 237.275 462.983ZM420.552 487.109C430.992 483.159 434.238 473.142 430.288 457.058C429.158 453.389 421.186 431.45 406.372 391.237C391.558 351.027 383.022 328.1 380.764 322.456C373.145 304.114 362.705 294.944 349.442 294.944C335.05 294.944 323.905 304.114 316.003 322.456C313.745 327.253 305.139 350.605 290.183 392.508C275.228 434.412 267.467 455.928 266.903 457.058C264.928 459.597 264.434 464.253 265.422 471.025C266.409 477.798 269.444 482.453 274.522 484.994C280.166 487.533 285.669 487.816 291.03 485.841C296.392 483.864 300.059 480.902 302.034 476.952L312.194 449.016H385.844C388.947 459.173 391.205 465.805 392.616 468.909C394.027 471.731 395.578 474.553 397.272 477.375C398.964 480.197 402.069 482.947 406.584 485.628C411.098 488.309 415.755 488.803 420.552 487.109ZM534.412 487.109C540.337 487.109 545.77 485.275 550.708 481.608C555.647 477.939 558.116 473 558.116 466.792C558.116 460.584 555.858 455.717 551.344 452.189C546.828 448.662 541.184 446.898 534.412 446.898H487.428V319.07C487.428 313.144 485.666 307.642 482.137 302.562C478.611 297.483 473.744 294.944 467.534 294.944C461.327 294.944 456.53 297.202 453.144 301.716C449.758 306.231 448.064 312.016 448.064 319.07V462.983C448.064 470.037 449.758 475.822 453.144 480.337C456.53 484.852 461.327 487.109 467.534 487.109C467.817 487.109 468.311 487.039 469.017 486.898C469.722 486.756 470.216 486.686 470.498 486.686C470.78 486.686 471.273 486.756 471.98 486.898C472.684 487.039 473.178 487.109 473.461 487.109H534.412ZM701.181 484.147C705.98 479.631 708.378 474.481 708.378 468.697C708.378 462.912 706.544 457.762 702.875 453.248C701.181 450.708 683.405 426.864 649.542 381.714C665.909 365.066 682.417 348.417 699.066 331.769C703.298 327.536 705.908 322.527 706.895 316.742C707.884 310.958 706.261 305.525 702.028 300.447C697.231 295.931 692.081 294.097 686.578 294.944C681.077 295.791 675.927 298.612 671.13 303.409C670.283 304.256 666.614 307.994 660.125 314.625C653.634 321.258 645.239 329.794 634.939 340.234C624.641 350.675 615.539 359.986 607.639 368.17V319.07C607.639 313.144 605.875 307.642 602.347 302.562C598.82 297.483 593.953 294.944 587.745 294.944C581.536 294.944 576.739 297.202 573.353 301.716C569.967 306.231 568.273 312.016 568.273 319.07V462.983C568.273 470.037 569.967 475.822 573.353 480.337C576.739 484.852 581.536 487.109 587.745 487.109C593.953 487.109 598.82 484.57 602.347 479.491C605.875 474.411 607.639 468.909 607.639 462.983V424.466C608.767 423.336 610.883 421.15 613.988 417.905C617.092 414.659 619.631 412.048 621.606 410.073C640.231 435.47 656.88 457.903 671.553 477.375C675.503 482.736 680.089 486.192 685.309 487.745C690.53 489.297 695.82 488.097 701.181 484.147ZM323.622 410.92L349.442 335.155L374.838 410.92H323.622Z"
-                        fill="black"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_2_13">
-                        <rect width="800" height="800" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-
-                  <span className="sr-only">Login with Kakao</span>
-                </Button>
-                <Button variant="outline" className="w-full cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                      d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <span className="sr-only">Login with Google</span>
-                </Button>
+                <KakaoLoginButton />
+                <GoogleLoginButton />
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
               계정이 없나요?{" "}
-              <a href="#" className="underline underline-offset-4">
+              <a href="/register" className="underline underline-offset-4">
                 회원가입
               </a>
             </div>
