@@ -29,7 +29,7 @@ export function LoginForm({
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
-    console.log("formdata", formData);
+    // console.log("formdata", formData);
     const validationResult = await validateLoginForm(formData);
 
     if (validationResult?.error) {
@@ -45,7 +45,7 @@ export function LoginForm({
       return;
     }
     const oauthCheck = await checkOauth(email);
-    console.log("oauthCheck", oauthCheck);
+    // console.log("oauthCheck", oauthCheck);
 
     if (oauthCheck.status === "error") {
       toast.error(oauthCheck.message);
@@ -67,10 +67,6 @@ export function LoginForm({
 
       if (session && session.user && session?.user.isEmailVerified === false) {
         router.push("/verification");
-      }
-
-      if (result?.status === 200) {
-        router.push("/check");
       }
     }
   };

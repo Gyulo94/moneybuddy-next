@@ -16,7 +16,7 @@ export default async function CheckPage() {
     redirect("/login");
   }
 
-  console.log("auth", session);
+  // console.log("auth", session);
 
   const getMe = await getProfile(session?.user.email);
   return (

@@ -17,7 +17,7 @@ export async function getProfile(email: string) {
   if (response.ok) {
     return data;
   }
-  console.log(response.statusText);
+  // console.log(response.statusText);
 
   throw new Error("fetch failed");
 }

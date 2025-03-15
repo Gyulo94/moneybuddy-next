@@ -80,7 +80,7 @@ export async function veryfiyEmail(token: string) {
     body: JSON.stringify({ token }),
   });
   const data = await response.json();
-  console.log("data", data);
+  // console.log("data", data);
 
   return data;
 }
@@ -119,7 +119,7 @@ export const findPassword = async (
     token: formData.get("token"),
   });
 
-  console.log("validationFields", validationFields);
+  // console.log("validationFields", validationFields);
 
   if (!validationFields.success) {
     return { error: validationFields.error.flatten().fieldErrors };
