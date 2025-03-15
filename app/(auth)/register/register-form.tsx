@@ -31,7 +31,7 @@ export function RegisterForm({
     if (response.status === "success") {
       setIsEmailChecked(true);
       toast.success("사용 가능한 이메일입니다.");
-    } else {
+    } else if (response.status === "error") {
       toast.error(response.message);
     }
   };
