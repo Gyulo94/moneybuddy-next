@@ -3,30 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { retryVerificationMail } from "@/lib/actions/auth.actions";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function VerificationPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  console.log("session", session);
+
   useEffect(() => {
-    if (session?.user.isEmailVerified === true) {
-      router.push("/");
-    } else if (!session || !session.user) {
-      router.push("/login");
+    if (session?.user?.isEmailVerified) {
+      redirect("/check");
     }
   }, [session, router]);
 
-  const email = session?.user?.email || "";
-  const token = session?.user?.verifyToken || "";
-
   async function retrySendMail() {
+    const email = session?.user?.email || "";
+    const token = session?.user?.verifyToken || "";
     const response = await retryVerificationMail(email, token);
 
     if (response.status === "success") {
       toast.success(response.message);
-      router.push("/check");
     } else if (response.status === "error") {
       toast.error(response.message);
       router.push("/check");

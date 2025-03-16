@@ -8,17 +8,14 @@ import {
 } from "@/components/ui/table";
 import { getProfile } from "@/lib/actions/user.actions";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 export default async function CheckPage() {
   const session = await auth();
-  if (!session) {
-    redirect("/login");
-  }
+  const email = session?.user.email!;
 
   // console.log("auth", session);
 
-  const getMe = await getProfile(session?.user.email);
+  const getMe = await getProfile(email);
   return (
     <div className="container mx-auto h-screen border flex justify-center gap-2">
       <div className="w-full">

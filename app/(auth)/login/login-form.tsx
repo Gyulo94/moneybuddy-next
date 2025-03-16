@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import SubmitButton from "@/components/ui/submit-button";
 import { checkOauth, validateLoginForm } from "@/lib/actions/auth.actions";
 import { cn } from "@/lib/utils";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -22,7 +22,6 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [state, setState] = useState<State>({});
-  const { data: session } = useSession();
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -65,8 +64,8 @@ export function LoginForm({
         });
       }
 
-      if (session && session.user && session?.user.isEmailVerified === false) {
-        router.push("/verification");
+      if (result?.status === 200) {
+        router.push("/check");
       }
     }
   };

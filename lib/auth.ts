@@ -116,12 +116,10 @@ export const authOptions: NextAuthOptions = {
       if (user) return { ...token, ...user };
       if (new Date().getTime() < token.serverTokens.expiresIn) return token;
       if (trigger === "update" && session !== null) {
-        const { name, image, role, isEmailVerified, verifyToken } = session;
+        const { name, image, role } = session;
         token.user.name = name;
         token.user.role = role;
         token.user.image = image;
-        token.user.isEmailVerified = isEmailVerified;
-        token.user.verifyToken = verifyToken;
       }
 
       return await refreshToken(token);
