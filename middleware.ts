@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 접근을 허용할 경로 목록
-  const publicPaths = ["/login", "/register"];
+  const publicPaths = ["/login", "/register", "/find-password"];
 
   // 경로가 허용된 목록에 포함되어 있는지 확인
   const isPublicPath =
