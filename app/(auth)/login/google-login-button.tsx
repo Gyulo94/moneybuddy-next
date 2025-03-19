@@ -7,7 +7,7 @@ export default function GoogleLoginButton() {
   const onClickGoogleLogin = async () => {
     await signIn("google", {
       redirect: true,
-      callbackUrl: "/check",
+      callbackUrl: "/dashboard",
     });
   };
   return (

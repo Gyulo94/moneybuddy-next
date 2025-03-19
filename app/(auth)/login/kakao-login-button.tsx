@@ -7,7 +7,7 @@ export default function KakaoLoginButton() {
   const onClickKakaoLogin = async () => {
     await signIn("kakao", {
       redirect: true,
-      callbackUrl: "/check",
+      callbackUrl: "/dashboard",
     });
   };
 

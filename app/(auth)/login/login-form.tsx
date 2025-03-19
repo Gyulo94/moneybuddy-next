@@ -65,7 +65,7 @@ export function LoginForm({
       }
 
       if (result?.status === 200) {
-        router.push("/check");
+        router.push("/dashboard");
       }
     }
   };

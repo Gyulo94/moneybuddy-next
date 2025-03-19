@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export default function VerificationPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log("session", session);
+  // console.log("session", session);
 
   useEffect(() => {
     if (session?.user?.isEmailVerified) {
