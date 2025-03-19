@@ -1,3 +1,4 @@
+import Header from "@/components/shared/header";
 import Provider from "@/components/shared/provider";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 import "@/styles/globals.css";
@@ -26,7 +27,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${pretendard.variable} font-pretendard`}>
-        <Provider>{children}</Provider>
+        <Provider>
+          <Header />
+          {children}
+        </Provider>
       </body>
     </html>
   );
