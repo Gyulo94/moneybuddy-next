@@ -25,7 +25,7 @@ export default function Sidebar() {
   return (
     <div className="w-full h-[calc(100vh-58px)] border-r">
       <div className="pt-3 pr-4 pb-2 pl-6 border-b">
-        <span className="text-sm text-gray-500 dark:text-primary">
+        <span className="text-sm text-gray-500 dark:text-card-foreground hover:dark:bg-secondary">
           {"월 예산 : "}
           <strong className="ml-2.5">100</strong>
           {" 만원"}
@@ -36,7 +36,7 @@ export default function Sidebar() {
         {SIDEBAR.CATEGORY.map((category) => (
           <li
             onClick={categoryClick}
-            className="px-6 leading-11 hover:bg-primary-foreground cursor-pointer"
+            className="px-6 leading-11 hover:bg-primary-foreground dark:text-card-foreground hover:dark:bg-secondary cursor-pointer"
             key={category.title}
           >
             <Link href={category.href}>
@@ -51,7 +51,7 @@ export default function Sidebar() {
         ))}
         <li
           onClick={toggleReportMenu}
-          className={`px-6 leading-11 hover:bg-primary-foreground cursor-pointer ${
+          className={`px-6 leading-11 hover:bg-primary-foreground dark:text-card-foreground hover:dark:bg-secondary cursor-pointer ${
             isReportOpen && "bg-primary-foreground"
           }`}
         >
@@ -66,7 +66,7 @@ export default function Sidebar() {
           SIDEBAR.REPORT.items.map((reportItem) => (
             <li
               onClick={categoryClick}
-              className={`px-6 leading-11 hover:text-primary curosr-pointer ${
+              className={`px-6 leading-11 hover:text-primary dark:text-card-foreground hover:dark:bg-secondary curosr-pointer ${
                 isReportOpen && "bg-primary-foreground"
               }`}
               key={reportItem.title}
@@ -78,7 +78,7 @@ export default function Sidebar() {
           ))}
         <li
           onClick={categoryClick}
-          className="px-6 leading-11 hover:bg-primary-foreground cursor-pointer"
+          className="px-6 leading-11 hover:bg-primary-foreground dark:text-card-foreground hover:dark:bg-secondary cursor-pointer"
         >
           <Link href={"/profile"}>
             <p className="flex items-center">
@@ -90,7 +90,7 @@ export default function Sidebar() {
           </Link>
         </li>
         <LogoutButton>
-          <li className="px-6 leading-11 hover:bg-primary-foreground cursor-pointer">
+          <li className="px-6 leading-11 hover:bg-primary-foreground dark:text-card-foreground hover:dark:bg-secondary cursor-pointer">
             <p className=" flex items-center">
               <span>
                 <LogOut className="w-4 h-4 -mt-0.5 mr-3" />

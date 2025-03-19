@@ -12,7 +12,7 @@ export default function ContentsContainer({
 }: ContentsContainerProps) {
   return (
     <main>
-      <div className="border-b mb-[32px]">
+      <div className="border-r border-b mb-[32px]">
         <h2 className=" inline-block text-md pt-3 pb-2 pl-6">{title}</h2>
       </div>
       <main

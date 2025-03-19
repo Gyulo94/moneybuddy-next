@@ -19,7 +19,7 @@ export default function Header() {
     return null;
   }
   return (
-    <header className="w-full h-14 border">
+    <header className="w-full h-14 border-b z-10">
       <div className="flex justify-between items-center px-5 lg:px-16 py-2">
         <div className="lg:hidden">
           <MobileMenuButton />
