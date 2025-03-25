@@ -34,7 +34,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DashboardReportWeeklyChart() {
+export default function DashboardReportWeeklyChart() {
   return (
     <Card>
       <CardHeader className="text-md float-left font-medium pb-0">
