@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { Toaster } from "sonner";
+import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "../ui/theme-provider";
 
 export default function Provider({ children }: { children: React.ReactNode }) {
@@ -14,7 +14,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         disableTransitionOnChange
       >
         {children}
-        <Toaster />
+        <ToastContainer />
       </ThemeProvider>
     </SessionProvider>
   );
