@@ -93,6 +93,19 @@ export const insertExpenseFormSchema = z.object({
   description: z.string().min(1, { message: "내용을 입력해주세요." }),
   memo: z.string().optional(),
   type: z.literal("EXPENSE"),
-  method: z.string().min(1, { message: "결제수단을 선택해주세요." }),
+  method: z.string().min(1, { message: "지출 수단을 선택해주세요." }),
+  userId: z.string(),
+});
+
+export const insertIncomeFormSchema = z.object({
+  categoryId: z.string().min(1, { message: "카테고리를 선택해주세요." }),
+  amount: z.number().min(1, { message: "금액을 입력해주세요." }),
+  tags: z.array(z.string()).min(1, { message: "태그를 선택해주세요." }),
+  date: z.string().min(1, { message: "날짜를 선택해주세요." }),
+  time: z.string().min(1, { message: "시간을 입력해주세요." }),
+  description: z.string().min(1, { message: "내용을 입력해주세요." }),
+  memo: z.string().optional(),
+  type: z.literal("INCOME"),
+  method: z.string().min(1, { message: "수입 수단을 선택해주세요." }),
   userId: z.string(),
 });

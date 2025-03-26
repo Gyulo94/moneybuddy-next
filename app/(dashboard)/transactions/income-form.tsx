@@ -10,7 +10,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SubmitButton from "@/components/ui/submit-button";
-import { CATEGORIES, TAGS, TIMES } from "@/lib/constants";
+import { InsertIncome } from "@/lib/actions/transaction.actions";
+import { CATEGORIES } from "@/lib/constants";
+import { Category, Tag } from "@/lib/type";
+import { format } from "date-fns";
 import {
   Calendar,
   CircleDollarSign,
@@ -18,18 +21,23 @@ import {
   CreditCard,
   File,
   Store,
-  Tag,
+  Tag as Tags,
 } from "lucide-react";
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { DatePicker } from "../../../components/transactions/date-picker";
 
-export default function IncomeForm() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // 1차 카테고리 상태
+interface IncomeFormProps {
+  tags: Tag[];
+}
 
+export default function IncomeForm(tags: IncomeFormProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>(""); // 1차 카테고리 상태
   const [amount, setAmount] = useState<string>(""); // 금액 상태
   const [selectedTags, setSelectedTags] = useState<string[]>([]); // 선택된 태그 상태
+  const [dateValue, setDateValue] = useState<Date | null>(null); // 날짜 상태
 
-  const selectedCategoryData = CATEGORIES.EXPENSES.find(
+  const selectedCategoryData = CATEGORIES.INCOMES.find(
     (cat) => cat.id === selectedCategory
   );
 
@@ -46,7 +54,6 @@ export default function IncomeForm() {
   };
 
   const numericAmount = getNumericAmount(); // 숫자 값으로 변환
-  console.log("저장할 금액:", numericAmount); // 숫자 값 출력
 
   const onClickTags = (tag: string) => {
     setSelectedTags(
@@ -57,27 +64,64 @@ export default function IncomeForm() {
     );
   };
 
-  console.log("선택된 태그:", selectedTags); // 선택된 태그 출력
+  const [state, action] = useActionState(InsertIncome, undefined);
+  useEffect(() => {
+    const errorFields = [
+      "categoryId",
+      "amount",
+      "tags",
+      "date",
+      "time",
+      "description",
+      "method",
+    ];
+
+    errorFields.forEach((field) => {
+      const errorMessage = (
+        state?.error as Record<string, string[]> | undefined
+      )?.[field]?.[0];
+      if (errorMessage) {
+        toast.error(errorMessage); // 에러 메시지 출력
+      }
+    });
+  }, [state?.error]);
+
+  useEffect(() => {
+    if (state?.status === "success") {
+      toast.success(state.message); // 성공 메시지 출력
+    }
+  }, [state?.status]); // state.status가 변경될 때 실행
 
   return (
-    <form>
+    <form action={action}>
       <div className="w-full flex flex-col justify-center items-end">
+        <Input type="hidden" name="amount" value={numericAmount} />
+        {selectedTags.map((tag, index) => (
+          <input key={index} type="hidden" name="tags[]" value={tag} />
+        ))}
+
+        <Input
+          type="hidden"
+          name="date"
+          value={dateValue ? dateValue.toISOString() : ""}
+        />
+        <Input type="hidden" name="category" value={selectedCategory} />
         {/* 1차 카테고리 Select */}
         <div className="relative w-full mb-3">
           <div
             className="absolute top-1 w-6 h-6 flex items-center justify-center rounded-full"
             style={{
-              backgroundColor: selectedCategoryData?.color || "", // 선택된 카테고리의 색상
+              backgroundColor: selectedCategoryData?.color!, // 선택된 카테고리의 색상
             }}
           >
             <span className="text-sm">
-              {selectedCategoryData?.icon || ""}{" "}
-              {/* 선택된 카테고리의 아이콘 */}
+              {selectedCategoryData?.icon!} {/* 선택된 카테고리의 아이콘 */}
             </span>
           </div>
           <div className="ml-10">
             <Select
               value={selectedCategory || ""}
+              name="categoryId"
               onValueChange={(value) => setSelectedCategory(value)}
             >
               <SelectTrigger className="w-full mb-3">
@@ -85,10 +129,10 @@ export default function IncomeForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {CATEGORIES.EXPENSES.map((category) => (
+                  {CATEGORIES.INCOMES.map((category: Category) => (
                     <SelectItem
                       key={category.id}
-                      value={category.id ?? ""}
+                      value={category.id || ""}
                       className="cursor-pointer"
                     >
                       {category.name}
@@ -110,6 +154,7 @@ export default function IncomeForm() {
           <div className="ml-10">
             <Input
               className="mb-3"
+              name="description"
               type="text"
               placeholder="수입 내역을 입력하세요"
             />
@@ -127,16 +172,16 @@ export default function IncomeForm() {
             <CreditCard className="w-6 h-6" />
           </span>
           <div className="ml-10">
-            <Select>
+            <Select name="method">
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="현금" />
+                <SelectValue placeholder="수입 수단" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="cash" className="cursor-pointer">
+                  <SelectItem value="현금" className="cursor-pointer">
                     현금
                   </SelectItem>
-                  <SelectItem value="card" className="cursor-pointer">
+                  <SelectItem value="카드" className="cursor-pointer">
                     카드
                   </SelectItem>
                 </SelectGroup>
@@ -150,49 +195,36 @@ export default function IncomeForm() {
             <Calendar className="w-6 h-6" />
           </span>
           <div className="ml-10">
-            <DatePicker />
+            <DatePicker setDateValue={setDateValue} />
           </div>
           <span className="ml-2">
             <Clock className="w-6 h-6 text-gray-500" />
           </span>
           <div className="ml-2 w-full">
-            <Select>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="시간 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {TIMES.map((time) => (
-                    <SelectItem
-                      key={time}
-                      value={time}
-                      className="cursor-pointer"
-                    >
-                      {time}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <Input
+              type="text"
+              name="time"
+              placeholder={`ex) ${format(new Date(), "HH:mm")}`}
+            />
           </div>
         </div>
 
         <div className="relative flex items-center  w-full mb-3">
           <span className="absolute top-0 text-gray-500">
-            <Tag className="w-6 h-6" />
+            <Tags className="w-6 h-6" />
           </span>
           <div className="ml-10">
-            {TAGS.map((tag) => (
+            {tags.tags.map((tag) => (
               <Badge
-                key={tag}
+                key={tag.id}
                 className={`mr-2 py-1 cursor-pointer ${
-                  selectedTags.includes(tag)
+                  selectedTags.includes(tag.id)
                     ? "bg-primary text-white"
                     : "bg-gray-500"
                 }`}
-                onClick={() => onClickTags(tag)} // 클릭 이벤트 처리
+                onClick={() => onClickTags(tag.id)}
               >
-                {tag}
+                {tag.name}
               </Badge>
             ))}
           </div>
@@ -203,7 +235,12 @@ export default function IncomeForm() {
             <File className="w-6 h-6" />
           </span>
           <div className="ml-10">
-            <Input className="mb-3" type="text" placeholder="메모" />
+            <Input
+              className="mb-3"
+              name="memo"
+              type="text"
+              placeholder="메모"
+            />
           </div>
         </div>
       </div>

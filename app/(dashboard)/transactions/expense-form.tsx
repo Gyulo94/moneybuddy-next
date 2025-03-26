@@ -59,9 +59,7 @@ export default function ExpenseForm(tags: ExpenseFormProps) {
   const getNumericAmount = () => {
     return Number(amount.replace(/,/g, "")); // 콤마 제거 후 숫자로 변환
   };
-
   const numericAmount = getNumericAmount(); // 숫자 값으로 변환
-  console.log("저장할 금액:", amount); // 숫자 값 출력
 
   const onClickTags = (tag: string) => {
     setSelectedTags(
@@ -75,8 +73,8 @@ export default function ExpenseForm(tags: ExpenseFormProps) {
   const [state, action] = useActionState(InsertExpense, undefined);
   useEffect(() => {
     const errorFields = [
-      "category",
-      "subCategory",
+      "categoryId",
+      "subCategoryId",
       "amount",
       "tags",
       "date",
@@ -95,7 +93,6 @@ export default function ExpenseForm(tags: ExpenseFormProps) {
     });
   }, [state?.error]);
 
-  console.log("state", state);
   useEffect(() => {
     if (state?.status === "success") {
       toast.success(state.message); // 성공 메시지 출력
@@ -114,6 +111,12 @@ export default function ExpenseForm(tags: ExpenseFormProps) {
           type="hidden"
           name="date"
           value={dateValue ? dateValue.toISOString() : ""}
+        />
+        <Input type="hidden" name="category" value={selectedCategory} />
+        <Input
+          type="hidden"
+          name="subCategory"
+          value={selectedSubCategory || ""}
         />
         {/* 1차 카테고리 Select */}
         <div className="relative w-full mb-3">

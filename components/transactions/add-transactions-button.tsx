@@ -58,7 +58,7 @@ export default function AddTransactionsButton({
           </div>
         </div>
         {expense && <ExpenseForm tags={tags} />}
-        {income && <IncomeForm />}
+        {income && <IncomeForm tags={tags} />}
       </DialogContent>
     </Dialog>
   );
