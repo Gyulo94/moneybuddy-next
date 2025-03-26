@@ -95,7 +95,7 @@ export async function InsertIncome(
   };
 }
 
-export async function TransactionFindByType(type: "EXPENSE" | "INCOME") {
+export async function TransactionFindByType(type?: "EXPENSE" | "INCOME") {
   const session = await auth();
   const token = session?.serverTokens.access_token!;
   const userId = session?.user.id!;

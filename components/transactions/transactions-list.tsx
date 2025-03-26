@@ -1,92 +1,39 @@
 "use client";
-import { TransactionFindByType } from "@/lib/actions/transaction.actions";
-import { useCheckedItemsStore } from "@/lib/store";
+
+import { useCheckedItemsStore, useFilterStore } from "@/lib/store";
 import { Transaction } from "@/lib/type";
 import { ListPlus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 
-export const TransactionsDateList = () => {
+export const TransactionsDateList = ({ data }: { data: Transaction[] }) => {
   const { isDeleteMode, setDeleteMode, checkedItems, setCheckedItems } =
     useCheckedItemsStore();
-  const [data, setData] = useState<Transaction[]>([]);
+  const { showExpense, showIncome } = useFilterStore();
 
-  // const transactions = [
-  //   {
-  //     date: "03/22 (토)",
-  //     totalAmount: 120000,
-  //     details: [
-  //       {
-  //         id: 3,
-  //         time: "10:30",
-  //         color: "#ff7b3a",
-  //         icon: "🍽️",
-  //         category1: "식사",
-  //         category2: "점심",
-  //         description: "김밥천국",
-  //         amount: 8000,
-  //         tags: ["외식"],
-  //         memo: "친구와 점심",
-  //       },
-  //       {
-  //         id: 2,
-  //         time: "15:00",
-  //         color: "#1cda90",
-  //         icon: "🚗",
-  //         category1: "교통/차량",
-  //         category2: "대중교통",
-  //         description: "교통비",
-  //         amount: 1200,
-  //         tags: ["교통"],
-  //         memo: "",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     date: "03/21 (금)",
-  //     totalAmount: 45000,
-  //     details: [
-  //       {
-  //         id: 1,
-  //         time: "09:00",
-  //         color: "#ff7b3a",
-  //         icon: "🍽️",
-  //         category1: "식사",
-  //         category2: "아침",
-  //         description: "편의점",
-  //         amount: 5000,
-  //         tags: ["간편식"],
-  //         memo: "아침 간단히",
-  //       },
-  //     ],
-  //   },
-  // ];
+  // 필터링된 데이터 생성
+  const filteredData = data
+    .map((transaction) => ({
+      ...transaction,
+      details: transaction.details.filter((detail) => {
+        if (detail.type === "EXPENSE" && !showExpense) return false;
+        if (detail.type === "INCOME" && !showIncome) return false;
+        return true;
+      }),
+    }))
+    .filter((transaction) => transaction.details.length > 0); // 필터링된 details가 있는 transaction만 포함
 
-  useEffect(() => {
-    const getTransactions = async () => {
-      try {
-        const response = await TransactionFindByType("EXPENSE");
-        setData(response);
-      } catch (error) {
-        toast.error("데이터를 불러오는 중 오류가 발생했습니다.");
-      }
-    };
-    getTransactions();
-  }, []);
-
-  useEffect(() => {
-    if (data.length > 0) {
-      setExpandedDates(data.map((transaction) => transaction.date));
-    }
-  }, [data]);
   // 모든 날짜를 기본적으로 열려 있도록 설정
   const [expandedDates, setExpandedDates] = useState<string[]>(
     data.map((transaction) => transaction.date)
   );
+
+  useEffect(() => {
+    // 초기 렌더링 시 한 번만 실행
+    setExpandedDates(data.map((transaction) => transaction.date));
+  }, [data]);
 
   const toggleDetails = (date: string) => {
     setExpandedDates(
@@ -97,13 +44,11 @@ export const TransactionsDateList = () => {
     );
   };
 
-  // 체크박스 상태 변경 핸들러
   const handleCheckboxChange = (id: number) => {
     const updatedCheckedItems = { ...checkedItems, [id]: !checkedItems[id] };
     setCheckedItems(updatedCheckedItems); // zustand 스토어 업데이트
   };
 
-  // 날짜별 체크박스 상태 변경 핸들러
   const handleDateCheckboxChange = (
     date: string,
     details: { id: number }[]
@@ -120,7 +65,7 @@ export const TransactionsDateList = () => {
 
   return (
     <Card className="w-full p-0">
-      <CardContent className=" p-0">
+      <CardContent className="p-0">
         <div className="flex items-center justify-end p-2">
           <Button className="cursor-pointer" variant={"ghost"} size={"icon"}>
             <ListPlus />
@@ -145,61 +90,71 @@ export const TransactionsDateList = () => {
         </div>
 
         <div className="w-full">
-          {data.map((transaction) => (
-            <div
-              key={transaction.date}
-              className="border-t leading-11 bg-[#fafafc]"
-            >
-              {/* 날짜와 총 금액 */}
-              <div
-                className="flex justify-between items-center cursor-pointer px-6"
-                onClick={() => toggleDetails(transaction.date)}
-              >
-                {isDeleteMode ? (
-                  <div className="flex justify-center items-center">
-                    <Checkbox
-                      className="mr-3 w-6 h-6"
-                      checked={transaction.details.every(
-                        (detail) => !!checkedItems[detail.id]
-                      )} // 날짜의 모든 데이터가 선택되었는지 확인
-                      onCheckedChange={() =>
-                        handleDateCheckboxChange(
-                          transaction.date,
-                          transaction.details
-                        )
-                      } // 날짜 체크박스 상태 변경 핸들러
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <span className="text-lg">{transaction.date}</span>
-                  </div>
-                ) : (
-                  <span className="text-lg">{transaction.date}</span>
-                )}
-                <span className="text-md text-gray-600">
-                  {new Intl.NumberFormat().format(transaction.totalAmount)} 원
-                </span>
-              </div>
+          {filteredData.map((transaction) => {
+            // 날짜별 총 금액 계산
+            const totalAmount = transaction.details.reduce((sum, detail) => {
+              // 수입과 지출이 모두 표시될 경우, 지출은 음수로 변환
+              const amount =
+                showExpense && showIncome && detail.type === "EXPENSE"
+                  ? -detail.amount
+                  : detail.amount;
+              return sum + amount;
+            }, 0);
 
-              {/* 세부 내역 (조건부 렌더링) */}
-              {expandedDates.includes(transaction.date) && (
-                <ul className="mt-4 space-y-2 px-6 bg-[#f5f5f7]">
-                  {transaction.details.map((detail) => (
-                    <li
-                      key={detail.id}
-                      className="flex py-3 cursor-pointer hover:bg-gray-100"
-                    >
-                      <div className="flex justify-start items-center w-full">
-                        {/* 체크박스 */}
-                        {isDeleteMode && (
-                          <Checkbox
-                            className="mr-3 cursor-pointer"
-                            checked={!!checkedItems[detail.id]} // 체크 상태
-                            onCheckedChange={() =>
-                              handleCheckboxChange(detail.id)
-                            } // 상태 변경 핸들러
-                          />
-                        )}
-                        {isDeleteMode ? (
+            return (
+              <div
+                key={transaction.date}
+                className="border-t leading-11 bg-[#fafafc]"
+              >
+                {/* 날짜와 총 금액 */}
+                <div
+                  className="flex justify-between items-center cursor-pointer px-6"
+                  onClick={() => toggleDetails(transaction.date)}
+                >
+                  {isDeleteMode ? (
+                    <div className="flex justify-center items-center">
+                      <Checkbox
+                        className="mr-3 w-6 h-6"
+                        checked={transaction.details.every(
+                          (detail) => !!checkedItems[detail.id]
+                        )} // 날짜의 모든 데이터가 선택되었는지 확인
+                        onCheckedChange={() =>
+                          handleDateCheckboxChange(
+                            transaction.date,
+                            transaction.details
+                          )
+                        } // 날짜 체크박스 상태 변경 핸들러
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <span className="text-lg">{transaction.date}</span>
+                    </div>
+                  ) : (
+                    <span className="text-lg">{transaction.date}</span>
+                  )}
+                  <span className="text-md text-gray-600">
+                    {new Intl.NumberFormat().format(totalAmount)} 원
+                  </span>
+                </div>
+
+                {/* 세부 내역 (조건부 렌더링) */}
+                {expandedDates.includes(transaction.date) && (
+                  <ul className="mt-4 space-y-2 px-6 bg-[#f5f5f7]">
+                    {transaction.details.map((detail) => (
+                      <li
+                        key={detail.id}
+                        className="flex py-3 cursor-pointer hover:bg-gray-100"
+                      >
+                        <div className="flex justify-start items-center w-full">
+                          {/* 체크박스 */}
+                          {isDeleteMode && (
+                            <Checkbox
+                              className="mr-3 cursor-pointer"
+                              checked={!!checkedItems[detail.id]} // 체크 상태
+                              onCheckedChange={() =>
+                                handleCheckboxChange(detail.id)
+                              } // 상태 변경 핸들러
+                            />
+                          )}
                           <div className="flex justify-start items-center w-full">
                             <span className="text-sm text-gray-500 mr-5 w-[5%]">
                               {detail.time}
@@ -223,12 +178,18 @@ export const TransactionsDateList = () => {
                             <p className="text-sm text-gray-700 w-[10%]">
                               {detail.subCategory}
                             </p>
-
                             <div className="text-sm text-gray-600 w-[20%]">
                               {detail.description}
                             </div>
                             <span className="text-sm text-gray-800 w-[20%]">
-                              {new Intl.NumberFormat().format(detail.amount)} 원
+                              {new Intl.NumberFormat().format(
+                                showExpense &&
+                                  showIncome &&
+                                  detail.type === "EXPENSE"
+                                  ? -detail.amount // 지출은 음수로 표시
+                                  : detail.amount
+                              )}{" "}
+                              원
                             </span>
                             <div className="text-sm text-gray-500 w-[15%]">
                               #{detail.tags.join(", #")}
@@ -239,54 +200,14 @@ export const TransactionsDateList = () => {
                               </div>
                             )}
                           </div>
-                        ) : (
-                          <div className="flex justify-start items-center w-full">
-                            <span className="text-sm text-gray-500 mr-5 w-[5%]">
-                              {detail.time}
-                            </span>
-                            <div className="flex justify-start items-center w-[15%]">
-                              <div className="text-sm text-gray-700 relative">
-                                <div
-                                  className="absolute bottom-0 left-0 w-6 h-6 flex items-center justify-center rounded-full"
-                                  style={{
-                                    backgroundColor: detail.color || "", // 선택된 카테고리의 색상
-                                  }}
-                                >
-                                  <span className="text-sm">
-                                    {detail?.icon || ""}{" "}
-                                    {/* 선택된 카테고리의 아이콘 */}
-                                  </span>
-                                </div>
-                                <p className="ml-10">{detail.category}</p>
-                              </div>
-                            </div>
-                            <p className="text-sm text-gray-700 w-[15%]">
-                              {detail.subCategory}
-                            </p>
-
-                            <div className="text-sm text-gray-600 w-[20%]">
-                              {detail.description}
-                            </div>
-                            <span className="text-sm text-gray-800 w-[10%] text-right mr-10">
-                              {new Intl.NumberFormat().format(detail.amount)} 원
-                            </span>
-                            <div className="text-sm text-gray-500 w-[20%]">
-                              #{detail.tags.join(", #")}
-                            </div>
-                            {detail.memo && (
-                              <div className="text-sm text-gray-400 w-[12%]">
-                                {detail.memo}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>

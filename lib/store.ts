@@ -23,3 +23,17 @@ export const useCheckedItemsStore = create<CheckedItemsState>((set, get) => ({
   },
   setDeleteMode: (isDelete) => set({ isDeleteMode: isDelete }),
 }));
+
+interface FilterState {
+  showExpense: boolean;
+  showIncome: boolean;
+  toggleExpense: () => void;
+  toggleIncome: () => void;
+}
+
+export const useFilterStore = create<FilterState>((set) => ({
+  showExpense: true,
+  showIncome: false,
+  toggleExpense: () => set((state) => ({ showExpense: !state.showExpense })),
+  toggleIncome: () => set((state) => ({ showIncome: !state.showIncome })),
+}));

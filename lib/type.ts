@@ -28,6 +28,7 @@ export type Transaction = {
   details: {
     id: number;
     time: string;
+    type: "EXPENSE" | "INCOME";
     color: string;
     icon: string;
     category: string;
