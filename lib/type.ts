@@ -21,3 +21,20 @@ export type Tag = {
   id: string;
   name: string;
 };
+
+export type Transaction = {
+  date: string;
+  totalAmount: number;
+  details: {
+    id: number;
+    time: string;
+    color: string;
+    icon: string;
+    category: string;
+    subCategory: string;
+    description: string;
+    amount: number;
+    tags: string[];
+    memo: string;
+  }[];
+};

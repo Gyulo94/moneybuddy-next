@@ -5,7 +5,7 @@ import { auth } from "../auth";
 import { SERVER_URL } from "../constants";
 import { FormState, insertExpenseFormSchema } from "../schema";
 
-export async function insertExpense(
+export async function InsertExpense(
   state: FormState,
   formData: FormData
 ): Promise<FormState> {
@@ -47,4 +47,20 @@ export async function insertExpense(
     status: "success",
     message: "지출 내역 등록 성공!",
   };
+}
+
+export async function TransactionFindByType(type: "EXPENSE" | "INCOME") {
+  const session = await auth();
+  const token = session?.serverTokens.access_token!;
+  const userId = session?.user.id!;
+
+  const response = await axios.get(`${SERVER_URL}/transaction/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      type,
+    },
+  });
+  return response.data;
 }

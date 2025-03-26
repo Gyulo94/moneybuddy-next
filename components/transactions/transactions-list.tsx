@@ -1,70 +1,91 @@
 "use client";
+import { TransactionFindByType } from "@/lib/actions/transaction.actions";
 import { useCheckedItemsStore } from "@/lib/store";
+import { Transaction } from "@/lib/type";
 import { ListPlus, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
-import AddTransactionsButton from "./add-transactions-button";
 
 export const TransactionsDateList = () => {
   const { isDeleteMode, setDeleteMode, checkedItems, setCheckedItems } =
     useCheckedItemsStore();
+  const [data, setData] = useState<Transaction[]>([]);
 
-  const transactions = [
-    {
-      date: "03/22 (토)",
-      totalAmount: 120000,
-      details: [
-        {
-          id: 3,
-          time: "10:30",
-          color: "#ff7b3a",
-          icon: "🍽️",
-          category1: "식사",
-          category2: "점심",
-          description: "김밥천국",
-          amount: 8000,
-          tags: ["외식"],
-          memo: "친구와 점심",
-        },
-        {
-          id: 2,
-          time: "15:00",
-          color: "#1cda90",
-          icon: "🚗",
-          category1: "교통/차량",
-          category2: "대중교통",
-          description: "교통비",
-          amount: 1200,
-          tags: ["교통"],
-          memo: "",
-        },
-      ],
-    },
-    {
-      id: 2,
-      date: "03/21 (금)",
-      totalAmount: 45000,
-      details: [
-        {
-          id: 1,
-          time: "09:00",
-          color: "#ff7b3a",
-          icon: "🍽️",
-          category1: "식사",
-          category2: "아침",
-          description: "편의점",
-          amount: 5000,
-          tags: ["간편식"],
-          memo: "아침 간단히",
-        },
-      ],
-    },
-  ];
+  // const transactions = [
+  //   {
+  //     date: "03/22 (토)",
+  //     totalAmount: 120000,
+  //     details: [
+  //       {
+  //         id: 3,
+  //         time: "10:30",
+  //         color: "#ff7b3a",
+  //         icon: "🍽️",
+  //         category1: "식사",
+  //         category2: "점심",
+  //         description: "김밥천국",
+  //         amount: 8000,
+  //         tags: ["외식"],
+  //         memo: "친구와 점심",
+  //       },
+  //       {
+  //         id: 2,
+  //         time: "15:00",
+  //         color: "#1cda90",
+  //         icon: "🚗",
+  //         category1: "교통/차량",
+  //         category2: "대중교통",
+  //         description: "교통비",
+  //         amount: 1200,
+  //         tags: ["교통"],
+  //         memo: "",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     date: "03/21 (금)",
+  //     totalAmount: 45000,
+  //     details: [
+  //       {
+  //         id: 1,
+  //         time: "09:00",
+  //         color: "#ff7b3a",
+  //         icon: "🍽️",
+  //         category1: "식사",
+  //         category2: "아침",
+  //         description: "편의점",
+  //         amount: 5000,
+  //         tags: ["간편식"],
+  //         memo: "아침 간단히",
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  useEffect(() => {
+    const getTransactions = async () => {
+      try {
+        const response = await TransactionFindByType("EXPENSE");
+        setData(response);
+      } catch (error) {
+        toast.error("데이터를 불러오는 중 오류가 발생했습니다.");
+      }
+    };
+    getTransactions();
+  }, []);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      setExpandedDates(data.map((transaction) => transaction.date));
+    }
+  }, [data]);
   // 모든 날짜를 기본적으로 열려 있도록 설정
   const [expandedDates, setExpandedDates] = useState<string[]>(
-    transactions.map((transaction) => transaction.date)
+    data.map((transaction) => transaction.date)
   );
 
   const toggleDetails = (date: string) => {
@@ -76,7 +97,6 @@ export const TransactionsDateList = () => {
     );
   };
 
-  // 체크박스 상태 변경 핸들러
   // 체크박스 상태 변경 핸들러
   const handleCheckboxChange = (id: number) => {
     const updatedCheckedItems = { ...checkedItems, [id]: !checkedItems[id] };
@@ -125,7 +145,7 @@ export const TransactionsDateList = () => {
         </div>
 
         <div className="w-full">
-          {transactions.map((transaction) => (
+          {data.map((transaction) => (
             <div
               key={transaction.date}
               className="border-t leading-11 bg-[#fafafc]"
@@ -197,11 +217,11 @@ export const TransactionsDateList = () => {
                                     {/* 선택된 카테고리의 아이콘 */}
                                   </span>
                                 </div>
-                                <p className="ml-10">{detail.category1}</p>
+                                <p className="ml-10">{detail.category}</p>
                               </div>
                             </div>
                             <p className="text-sm text-gray-700 w-[10%]">
-                              {detail.category2}
+                              {detail.subCategory}
                             </p>
 
                             <div className="text-sm text-gray-600 w-[20%]">
@@ -211,7 +231,7 @@ export const TransactionsDateList = () => {
                               {new Intl.NumberFormat().format(detail.amount)} 원
                             </span>
                             <div className="text-sm text-gray-500 w-[15%]">
-                              #{detail.tags.join(", ")}
+                              #{detail.tags.join(", #")}
                             </div>
                             {detail.memo && (
                               <div className="text-sm text-gray-400 w-[12%]">
@@ -220,48 +240,45 @@ export const TransactionsDateList = () => {
                             )}
                           </div>
                         ) : (
-                          <AddTransactionsButton>
-                            <div className="flex justify-start items-center w-full">
-                              <span className="text-sm text-gray-500 mr-5 w-[5%]">
-                                {detail.time}
-                              </span>
-                              <div className="flex justify-start items-center w-[15%]">
-                                <div className="text-sm text-gray-700 relative">
-                                  <div
-                                    className="absolute bottom-0 left-0 w-6 h-6 flex items-center justify-center rounded-full"
-                                    style={{
-                                      backgroundColor: detail.color || "", // 선택된 카테고리의 색상
-                                    }}
-                                  >
-                                    <span className="text-sm">
-                                      {detail?.icon || ""}{" "}
-                                      {/* 선택된 카테고리의 아이콘 */}
-                                    </span>
-                                  </div>
-                                  <p className="ml-10">{detail.category1}</p>
+                          <div className="flex justify-start items-center w-full">
+                            <span className="text-sm text-gray-500 mr-5 w-[5%]">
+                              {detail.time}
+                            </span>
+                            <div className="flex justify-start items-center w-[15%]">
+                              <div className="text-sm text-gray-700 relative">
+                                <div
+                                  className="absolute bottom-0 left-0 w-6 h-6 flex items-center justify-center rounded-full"
+                                  style={{
+                                    backgroundColor: detail.color || "", // 선택된 카테고리의 색상
+                                  }}
+                                >
+                                  <span className="text-sm">
+                                    {detail?.icon || ""}{" "}
+                                    {/* 선택된 카테고리의 아이콘 */}
+                                  </span>
                                 </div>
+                                <p className="ml-10">{detail.category}</p>
                               </div>
-                              <p className="text-sm text-gray-700 w-[10%]">
-                                {detail.category2}
-                              </p>
-
-                              <div className="text-sm text-gray-600 w-[20%]">
-                                {detail.description}
-                              </div>
-                              <span className="text-sm text-gray-800 w-[20%]">
-                                {new Intl.NumberFormat().format(detail.amount)}{" "}
-                                원
-                              </span>
-                              <div className="text-sm text-gray-500 w-[15%]">
-                                #{detail.tags.join(", ")}
-                              </div>
-                              {detail.memo && (
-                                <div className="text-sm text-gray-400 w-[12%]">
-                                  {detail.memo}
-                                </div>
-                              )}
                             </div>
-                          </AddTransactionsButton>
+                            <p className="text-sm text-gray-700 w-[15%]">
+                              {detail.subCategory}
+                            </p>
+
+                            <div className="text-sm text-gray-600 w-[20%]">
+                              {detail.description}
+                            </div>
+                            <span className="text-sm text-gray-800 w-[10%] text-right mr-10">
+                              {new Intl.NumberFormat().format(detail.amount)} 원
+                            </span>
+                            <div className="text-sm text-gray-500 w-[20%]">
+                              #{detail.tags.join(", #")}
+                            </div>
+                            {detail.memo && (
+                              <div className="text-sm text-gray-400 w-[12%]">
+                                {detail.memo}
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     </li>

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SubmitButton from "@/components/ui/submit-button";
-import { insertExpense } from "@/lib/actions/transaction.actions";
+import { InsertExpense } from "@/lib/actions/transaction.actions";
 import { CATEGORIES } from "@/lib/constants";
 import { Category, Tag } from "@/lib/type";
 import { format } from "date-fns";
@@ -72,7 +72,7 @@ export default function ExpenseForm(tags: ExpenseFormProps) {
     );
   };
 
-  const [state, action] = useActionState(insertExpense, undefined);
+  const [state, action] = useActionState(InsertExpense, undefined);
   useEffect(() => {
     const errorFields = [
       "category",
