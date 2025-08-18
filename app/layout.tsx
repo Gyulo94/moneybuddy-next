@@ -1,6 +1,10 @@
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
+import QueryProvider from "@/lib/query/provider/query-provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 
 const pretendard = localFont({
@@ -24,9 +28,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body className={`${pretendard.variable} font-pretendard bg-[#f3f1ef]`}>
-        {children}
+        <SessionProvider>
+          <QueryProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+            <Toaster />
+            {/* <ModalProvider /> */}
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );
