@@ -1,1 +1,1 @@
-export { login } from "./auth";
+export { login, sendEmail, signup, verifyToken } from "./auth";

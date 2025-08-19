@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { login } from "../actions";
+import { login, sendEmail, signup, verifyToken } from "../actions";
 
 export function useLogin() {
   const router = useRouter();
@@ -20,3 +20,46 @@ export function useLogin() {
   });
   return mutation;
 }
+
+export const useSignup = () => {
+  const mutation = useMutation({
+    mutationFn: signup,
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+};
+
+export const useVerifyToken = (token: string) => {
+  const query = useQuery({
+    queryKey: ["verifyToken"],
+    queryFn: async () => verifyToken(token),
+    enabled: !!token,
+    retry: false,
+  });
+  return query;
+};
+
+export const useSendMail = () => {
+  const mutation = useMutation({
+    mutationFn: async ({
+      email,
+      type,
+    }: {
+      email: string;
+      type: "signup" | "reset";
+    }) => sendEmail(email, type),
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+};
