@@ -31,12 +31,12 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className={`${pretendard.variable} font-pretendard bg-[#f3f1ef]`}>
+      <body className={`${pretendard.variable} font-pretendard antialiased`}>
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="dark"
+              defaultTheme="light"
               disableTransitionOnChange
             >
               {children}
