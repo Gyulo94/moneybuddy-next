@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
@@ -27,10 +28,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={`${pretendard.variable} font-pretendard bg-[#f3f1ef]`}>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider
               attribute="class"
