@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   login,
+  logout,
   resetPassword,
   sendEmail,
   signup,
@@ -14,7 +15,7 @@ export function useLogin() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      router.push("/");
+      window.location.href = "/dashboard";
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -27,7 +28,7 @@ export function useLogin() {
   return mutation;
 }
 
-export const useSignup = () => {
+export function useSignup() {
   const mutation = useMutation({
     mutationFn: signup,
     onError: (error) => {
@@ -37,9 +38,26 @@ export const useSignup = () => {
     },
   });
   return mutation;
-};
+}
 
-export const useVerifyToken = (token: string) => {
+export function useLogout() {
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: logout,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      router.push("/login");
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
+
+export function useVerifyToken(token: string) {
   const query = useQuery({
     queryKey: ["verifyToken"],
     queryFn: async () => verifyToken(token),
@@ -47,9 +65,9 @@ export const useVerifyToken = (token: string) => {
     retry: false,
   });
   return query;
-};
+}
 
-export const useSendMail = () => {
+export function useSendMail() {
   const mutation = useMutation({
     mutationFn: async ({
       email,
@@ -68,9 +86,9 @@ export const useSendMail = () => {
     },
   });
   return mutation;
-};
+}
 
-export const useResetPassword = () => {
+export function useResetPassword() {
   const router = useRouter();
   const mutation = useMutation({
     mutationFn: resetPassword,
@@ -85,4 +103,4 @@ export const useResetPassword = () => {
     },
   });
   return mutation;
-};
+}

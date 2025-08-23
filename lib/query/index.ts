@@ -1,5 +1,6 @@
 export {
   useLogin,
+  useLogout,
   useResetPassword,
   useSendMail,
   useSignup,

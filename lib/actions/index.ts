@@ -1,1 +1,8 @@
-export { login, resetPassword, sendEmail, signup, verifyToken } from "./auth";
+export {
+  login,
+  logout,
+  resetPassword,
+  sendEmail,
+  signup,
+  verifyToken,
+} from "./auth";

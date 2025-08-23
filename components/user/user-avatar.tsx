@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Skeleton } from "../ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface Props {
@@ -34,8 +35,8 @@ export default function UserAvatar({
             alt={name}
             className="object-center object-cover"
           />
-          <AvatarFallback className="bg-primary text-white">
-            {name.toUpperCase()}
+          <AvatarFallback>
+            <Skeleton className="size-full rounded-full" />
           </AvatarFallback>
         </Avatar>
       </TooltipTrigger>

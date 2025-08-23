@@ -1,7 +1,8 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import axios from "axios";
+import { cookies } from "next/headers";
 import z from "zod/v3";
 import { SERVER_URL } from "../constants";
 import {
@@ -15,7 +16,7 @@ export async function login(values: z.infer<typeof LoginFormSchema>) {
   await signIn("credentials", {
     email,
     password,
-    redirect: true,
+    redirect: false,
   });
 }
 
@@ -33,6 +34,32 @@ export async function signup(values: z.infer<typeof SignupFormSchema>) {
     password,
     redirect: false,
   });
+}
+
+export async function logout() {
+  const session = await auth();
+  const token = session?.serverTokens.accessToken;
+  try {
+    const response = await axios.post(
+      `${SERVER_URL}/auth/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response.data.statusCode === 200) {
+      await (await cookies()).delete(process.env.NEXTAUTH_SESSION_TOKEN_NAME!);
+      return response.data;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message;
+      throw new Error(message);
+    }
+    throw error;
+  }
 }
 
 export async function sendEmail(email: string, type: "signup" | "reset") {
