@@ -1,9 +1,8 @@
 "use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useSignup, useVerifyToken } from "@/lib/query";
-import { SignupFormSchema } from "@/lib/validations";
+import { useResetPassword, useVerifyToken } from "@/lib/query";
+import { ResetPasswordFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -20,23 +19,21 @@ import {
   FormMessage,
 } from "../ui/form";
 
-export function SignupForm() {
+export function ResetPasswordForm() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof SignupFormSchema>>({
-    resolver: zodResolver(SignupFormSchema),
+  const token = useParams<{ token: string }>().token;
+  const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
+    resolver: zodResolver(ResetPasswordFormSchema),
     defaultValues: {
       email: "",
       token: "",
-      name: "",
       password: "",
       confirmPassword: "",
     },
   });
-  const token = useParams<{ token: string }>().token;
 
   const { data: email, isError, error, isLoading } = useVerifyToken(token);
-
-  const { mutate: signup } = useSignup();
+  const { mutate: resetPassword } = useResetPassword();
 
   if (!isLoading) {
     setTimeout(() => {
@@ -50,15 +47,16 @@ export function SignupForm() {
       router.replace("/signup");
     }
   }
-  function onSubmit(values: z.infer<typeof SignupFormSchema>) {
-    signup(values);
+
+  function onSubmit(values: z.infer<typeof ResetPasswordFormSchema>) {
+    resetPassword(values);
   }
 
   return (
     <div className="flex flex-col gap-6">
       <Card className="py-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">회원가입</CardTitle>
+          <CardTitle className="text-xl">비밀번호 찾기</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -67,28 +65,40 @@ export function SignupForm() {
                 <div className="grid gap-6">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>이름</FormLabel>
                         <FormControl>
-                          <Input type="text" placeholder="이름" {...field} />
+                          <Input type="hidden" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="token"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input type="hidden" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <input type="hidden" name="token" value={token} />
                   <div className="grid gap-2">
                     <FormField
                       control={form.control}
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>비밀번호</FormLabel>
+                          <FormLabel>새로운 비밀번호</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="비밀번호"
+                              placeholder="새로운 비밀번호"
                               {...field}
                             />
                           </FormControl>
@@ -103,11 +113,11 @@ export function SignupForm() {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>비밀번호 확인</FormLabel>
+                          <FormLabel>새로운 비밀번호 확인</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="비밀번호 확인"
+                              placeholder="새로운 비밀번호 확인"
                               {...field}
                             />
                           </FormControl>
@@ -116,17 +126,16 @@ export function SignupForm() {
                       )}
                     />
                   </div>
-
-                  <Button>회원가입</Button>
-                </div>
-                <div className="text-sm text-center text-muted-foreground">
-                  이미 계정이 있나요?{" "}
-                  <Link
-                    href={"/login"}
-                    className="text-foreground link hover:underline underline-offset-2"
-                  >
-                    로그인
-                  </Link>
+                  <Button>비밀번호 재설정</Button>
+                  <div className="text-sm text-center text-muted-foreground">
+                    이미 계정이 있나요?{" "}
+                    <Link
+                      href={"/login"}
+                      className="text-foreground link hover:underline underline-offset-2"
+                    >
+                      로그인
+                    </Link>
+                  </div>
                 </div>
               </div>
             </form>

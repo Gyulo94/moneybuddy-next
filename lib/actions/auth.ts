@@ -4,7 +4,11 @@ import { signIn } from "@/auth";
 import axios from "axios";
 import z from "zod/v3";
 import { SERVER_URL } from "../constants";
-import { LoginFormSchema, SignupFormSchema } from "../validations";
+import {
+  LoginFormSchema,
+  ResetPasswordFormSchema,
+  SignupFormSchema,
+} from "../validations";
 
 export async function login(values: z.infer<typeof LoginFormSchema>) {
   const { email, password } = values;
@@ -66,3 +70,23 @@ export async function verifyToken(token: string) {
     throw error;
   }
 }
+
+export const resetPassword = async (
+  values: z.infer<typeof ResetPasswordFormSchema>
+) => {
+  const { email, token, password } = values;
+  try {
+    const response = await axios.post(`${SERVER_URL}/auth/reset-password`, {
+      email,
+      token,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message;
+      throw new Error(message);
+    }
+    throw error;
+  }
+};

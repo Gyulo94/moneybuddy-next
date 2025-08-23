@@ -1,7 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { login, sendEmail, signup, verifyToken } from "../actions";
+import {
+  login,
+  resetPassword,
+  sendEmail,
+  signup,
+  verifyToken,
+} from "../actions";
 
 export function useLogin() {
   const router = useRouter();
@@ -54,6 +60,23 @@ export const useSendMail = () => {
     }) => sendEmail(email, type),
     onSuccess: (data) => {
       toast.success(data.message);
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+};
+
+export const useResetPassword = () => {
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      router.push("/login");
     },
     onError: (error) => {
       if (error instanceof Error) {
