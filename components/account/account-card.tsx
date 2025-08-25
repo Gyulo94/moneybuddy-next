@@ -1,0 +1,78 @@
+import { DEFAULT_BANK_LOGO } from "@/lib/constants";
+import { EllipsisIcon } from "lucide-react";
+import Image from "next/image";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
+interface Props {
+  title: string;
+  bankName: string;
+  number: string;
+  url: string;
+  type: string;
+  isAccount: boolean;
+  currentBalance: number;
+}
+
+export default function AccountCard({
+  title,
+  bankName,
+  number,
+  url,
+  type,
+  isAccount,
+  currentBalance,
+}: Props) {
+  return (
+    <Card className="py-3 gap-3 lg:gap-0 shadow-md">
+      <CardHeader className="flex items-center justify-between px-2">
+        <CardTitle>
+          {title}
+          {bankName && (
+            <span className="ml-2 text-muted-foreground font-normal text-xs">
+              {bankName}({number})
+            </span>
+          )}
+        </CardTitle>
+        <Button
+          variant={"ghost"}
+          size={"sm"}
+          className="cursor-pointer text-muted-foreground p-0"
+        >
+          <EllipsisIcon className="size-6" />
+        </Button>
+      </CardHeader>
+      <CardContent className="flex items-center px-0 gap-0 lg:justify-center h-[180px] text-sm">
+        <div className="relative w-[50%] aspect-auto flex justify-center px-0 lg:px-2">
+          <Image
+            src={url || DEFAULT_BANK_LOGO}
+            alt={bankName || "은행 로고"}
+            width={100}
+            height={100}
+            className="object-center object-cover"
+          />
+        </div>
+        <div className="w-[50%] h-full flex flex-col justify-center gap-2 border-l pl-6 pr-0 lg:px-6">
+          <p>
+            타입: <span className="text-muted-foreground">{type}</span>
+          </p>
+          {isAccount ? (
+            <p>
+              잔액:{" "}
+              <span className="text-muted-foreground">
+                {currentBalance.toLocaleString()} 원
+              </span>
+            </p>
+          ) : (
+            <p>
+              누적:{" "}
+              <span className="text-muted-foreground">
+                {currentBalance.toLocaleString()} 원
+              </span>
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

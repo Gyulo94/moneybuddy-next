@@ -6,3 +6,5 @@ export {
   signup,
   verifyToken,
 } from "./auth";
+
+export { createAccount, findAccountsByUserId } from "./account";
