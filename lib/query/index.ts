@@ -9,6 +9,7 @@ export {
 
 export {
   useCreateAccount,
+  useDeleteAccount,
   useFindAccountById,
   useFindAccountsByUserId,
   useUpdateAccount,

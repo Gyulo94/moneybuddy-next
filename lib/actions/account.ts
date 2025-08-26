@@ -70,7 +70,7 @@ export async function updateAccount(
   const session = await auth();
   const token = session?.serverTokens.accessToken;
   try {
-    const response = await axios.post(
+    const response = await axios.put(
       `${SERVER_URL}/account/update/${id}`,
       values,
       {
@@ -79,6 +79,25 @@ export async function updateAccount(
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message;
+      throw new Error(message);
+    }
+    throw error;
+  }
+}
+
+export async function deleteAccount(id?: string) {
+  const session = await auth();
+  const token = session?.serverTokens.accessToken;
+  try {
+    const response = await axios.delete(`${SERVER_URL}/account/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

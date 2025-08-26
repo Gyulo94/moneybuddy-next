@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import z from "zod/v3";
 import {
   createAccount,
+  deleteAccount,
   findAccountById,
   findAccountsByUserId,
   updateAccount,
@@ -54,6 +55,23 @@ export function useUpdateAccount(id?: string) {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["account", { id }] });
+    },
+    onError(error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
+
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (id?: string) => deleteAccount(id),
+    onSuccess(data) {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError(error) {
       if (error instanceof Error) {

@@ -45,8 +45,6 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
     }
   }, [form]);
 
-  console.log(form.formState.errors);
-
   return (
     <Form {...form}>
       <form
