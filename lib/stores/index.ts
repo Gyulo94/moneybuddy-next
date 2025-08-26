@@ -1,1 +1,4 @@
-export { useCreateAccountDialogStore } from "./account";
+export {
+  useCreateAccountDialogStore,
+  useEditAccountDialogStore,
+} from "./account";

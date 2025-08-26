@@ -27,8 +27,6 @@ export default function CreateAccountDialog() {
   };
 
   function onSubmit(values: z.infer<typeof AccountFormSchema>) {
-    console.log("values", values);
-
     createAccount(values, {
       onSuccess: onClose,
     });

@@ -24,17 +24,18 @@ import { useForm } from "react-hook-form";
 import z from "zod/v3";
 
 interface Props {
+  id?: string;
   onSubmit: (values: z.infer<typeof AccountFormSchema>) => void;
   defaultValues: z.infer<typeof AccountFormSchema>;
   onClose: () => void;
 }
 
-export function AccountForm({ onSubmit, defaultValues, onClose }: Props) {
+export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
   const form = useForm<z.infer<typeof AccountFormSchema>>({
     resolver: zodResolver(AccountFormSchema),
     defaultValues,
   });
-  const [logo, setLogo] = useState<string>("");
+  const [logo, setLogo] = useState<string>(defaultValues.logo || "");
 
   useEffect(() => {
     if (form.getValues("accountType") === "현금") {
@@ -169,7 +170,8 @@ export function AccountForm({ onSubmit, defaultValues, onClose }: Props) {
                   value={field.value.toLocaleString()}
                   onChange={(e) => {
                     const value = e.target.value.replace(/,/g, "");
-                    field.onChange(Number(value));
+
+                    field.onChange(isNaN(Number(value)) ? 0 : Number(value));
                   }}
                 />
               </FormControl>
@@ -188,7 +190,7 @@ export function AccountForm({ onSubmit, defaultValues, onClose }: Props) {
             취소
           </Button>
           <Button type="submit" className="w-20">
-            생성
+            {id ? "수정" : "추가"}
           </Button>
         </div>
       </form>

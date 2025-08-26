@@ -7,4 +7,9 @@ export {
   useVerifyToken,
 } from "./auth";
 
-export { useCreateAccount, useFindAccountsByUserId } from "./account";
+export {
+  useCreateAccount,
+  useFindAccountById,
+  useFindAccountsByUserId,
+  useUpdateAccount,
+} from "./account";

@@ -7,4 +7,9 @@ export {
   verifyToken,
 } from "./auth";
 
-export { createAccount, findAccountsByUserId } from "./account";
+export {
+  createAccount,
+  findAccountById,
+  findAccountsByUserId,
+  updateAccount,
+} from "./account";

@@ -1,10 +1,18 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DEFAULT_BANK_LOGO } from "@/lib/constants";
+import { useEditAccountDialogStore } from "@/lib/stores";
 import { EllipsisIcon } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface Props {
+  id: string;
   title: string;
   bankName: string;
   number: string;
@@ -15,6 +23,7 @@ interface Props {
 }
 
 export default function AccountCard({
+  id,
   title,
   bankName,
   number,
@@ -23,6 +32,14 @@ export default function AccountCard({
   isAccount,
   currentBalance,
 }: Props) {
+  const { onOpen: onAccountEditOpen } = useEditAccountDialogStore();
+
+  function onEditAccount() {
+    console.log("수정");
+
+    onAccountEditOpen(id);
+  }
+
   return (
     <Card className="py-3 gap-3 lg:gap-0 shadow-md">
       <CardHeader className="flex items-center justify-between px-2">
@@ -34,13 +51,26 @@ export default function AccountCard({
             </span>
           )}
         </CardTitle>
-        <Button
-          variant={"ghost"}
-          size={"sm"}
-          className="cursor-pointer text-muted-foreground p-0"
-        >
-          <EllipsisIcon className="size-6" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="cursor-pointer text-muted-foreground p-0"
+            >
+              <EllipsisIcon className="size-6" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="absolute top-0 -right-12"
+            align="start"
+          >
+            <DropdownMenuItem onClick={isAccount ? onEditAccount : undefined}>
+              수정
+            </DropdownMenuItem>
+            <DropdownMenuItem>삭제</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="flex items-center px-0 gap-0 lg:justify-center h-[180px] text-sm">
         <div className="relative w-[50%] aspect-auto flex justify-center px-0 lg:px-2">

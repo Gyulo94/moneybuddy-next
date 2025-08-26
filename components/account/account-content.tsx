@@ -13,6 +13,7 @@ export default function AccountContent() {
         accounts.map((account: Account) => (
           <AccountCard
             key={account.id}
+            id={account.id}
             title={account.name}
             currentBalance={account.currentBalance}
             bankName={account.bankName}

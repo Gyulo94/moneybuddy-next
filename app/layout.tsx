@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import OpenProvider from "@/components/provider/open-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
@@ -42,7 +43,7 @@ export default async function RootLayout({
               {children}
             </ThemeProvider>
             <Toaster />
-            {/* <ModalProvider /> */}
+            <OpenProvider />
           </QueryProvider>
         </SessionProvider>
       </body>
