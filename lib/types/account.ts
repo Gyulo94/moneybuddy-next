@@ -1,4 +1,5 @@
 import { Session } from "next-auth";
+import { Bank } from "./bank";
 
 export type Account = {
   id: string;
@@ -7,15 +8,13 @@ export type Account = {
 
   name: string;
 
-  logo: string;
-
   accountType: AccountType;
 
   currentBalance: number;
 
   initialBalance: number;
 
-  bankName: string;
+  bank?: Bank;
 
   accountNumber: string;
 

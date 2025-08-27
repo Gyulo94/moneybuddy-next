@@ -22,7 +22,7 @@ export default function CreateAccountDialog() {
     logo: "",
     accountType: "계좌" as AccountType,
     initialBalance: 0,
-    bankName: "",
+    bankId: "",
     accountNumber: "",
   };
 

@@ -16,23 +16,21 @@ import { AccountForm } from "./account-form";
 
 export default function EditAccountDialog() {
   const { isOpen, onClose, id } = useEditAccountDialogStore();
-  console.log("id", id);
-
   const { data, isLoading } = useFindAccountById(id);
   const account: Account = data || {};
-
   const { mutate: updateAccount } = useUpdateAccount(id);
   const defaultValues = {
     name: account.name,
-    logo: account.logo,
-    accountType: account.accountType as AccountType,
+    accountType: "계좌" as AccountType,
     initialBalance: account.currentBalance,
-    bankName: account.bankName,
+    bankId: account?.bank?.id || "",
+    logo: account?.bank?.logo || "",
     accountNumber: account.accountNumber,
   };
 
   function onSubmit(values: z.infer<typeof AccountFormSchema>) {
-    updateAccount(values, {
+    const { logo, ...rest } = values;
+    updateAccount(rest, {
       onSuccess: onClose,
     });
   }

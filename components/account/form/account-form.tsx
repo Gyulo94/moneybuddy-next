@@ -19,7 +19,7 @@ import { BANKS, DEFAULT_BANK_LOGO } from "@/lib/constants";
 import { AccountFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod/v3";
 
@@ -36,14 +36,6 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
     defaultValues,
   });
   const [logo, setLogo] = useState<string>(defaultValues.logo || "");
-
-  useEffect(() => {
-    if (form.getValues("accountType") === "현금") {
-      form.setValue("bankName", "");
-      form.setValue("accountNumber", "");
-      form.setValue("logo", "");
-    }
-  }, [form]);
 
   return (
     <Form {...form}>
@@ -69,32 +61,9 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
               <FormLabel>이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder={`원하는 ${
-                    form.watch("accountType") === "계좌" ? "계좌" : "현금지갑"
-                  } 이름을 입력하세요.`}
+                  placeholder={`원하는 계좌 이름을 입력하세요.`}
                   {...field}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="accountType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>타입</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="계좌 유형을 선택하세요." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="계좌">계좌</SelectItem>
-                    <SelectItem value="현금">현금</SelectItem>
-                  </SelectContent>
-                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +73,7 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
           <>
             <FormField
               control={form.control}
-              name="bankName"
+              name="bankId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>은행명</FormLabel>
@@ -113,10 +82,9 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
                       onValueChange={(selected) => {
                         field.onChange(selected);
                         const selectedBank = BANKS.find(
-                          (bank) => bank.name === selected
+                          (bank) => bank.id === selected
                         );
                         setLogo(selectedBank?.logo!);
-                        form.setValue("logo", selectedBank?.logo!);
                       }}
                       value={field.value}
                     >
@@ -125,7 +93,7 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
                       </SelectTrigger>
                       <SelectContent>
                         {BANKS.map((bank) => (
-                          <SelectItem key={bank.id} value={bank.name}>
+                          <SelectItem key={bank.id} value={bank.id}>
                             {bank.name}
                           </SelectItem>
                         ))}
@@ -141,10 +109,10 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
               name="accountNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>계좌 번호 뒷 4자리</FormLabel>
+                  <FormLabel>계좌번호 뒷 4자리</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="계좌 번호 뒷 4자리를 입력하세요."
+                      placeholder="계좌번호 뒷 4자리를 입력하세요."
                       maxLength={4}
                       {...field}
                     />

@@ -7,6 +7,7 @@ import AccountCard from "./account-card";
 export default function AccountContent() {
   const { data } = useFindAccountsByUserId();
   const accounts = data ?? [];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
       {accounts.length > 0 ? (
@@ -16,11 +17,10 @@ export default function AccountContent() {
             id={account.id}
             title={account.name}
             currentBalance={account.currentBalance}
-            bankName={account.bankName}
-            number={account.accountNumber}
-            url={account.logo}
+            bank={account.bank!}
+            accountNumber={account.accountNumber}
             type={account.accountType}
-            isAccount={true}
+            isCash={account.accountType === "현금"}
           />
         ))
       ) : (
