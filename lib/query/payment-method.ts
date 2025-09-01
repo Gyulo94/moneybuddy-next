@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import z from "zod/v3";
 import {
   createPaymentMethod,
+  deletePaymentMethod,
   findPaymentMethodById,
   findPaymentMethodsByUserId,
   updatePaymentMethod,
@@ -54,6 +55,23 @@ export function useUpdatePaymentMethod(id?: string) {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["paymentMethods"] });
       queryClient.invalidateQueries({ queryKey: ["paymentMethod", { id }] });
+    },
+    onError(error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
+
+export function useDeletePaymentMethod() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (id?: string) => deletePaymentMethod(id),
+    onSuccess(data) {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["paymentMethods"] });
     },
     onError(error) {
       if (error instanceof Error) {

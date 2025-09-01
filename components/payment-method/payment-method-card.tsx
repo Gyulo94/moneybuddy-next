@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DEFAULT_BANK_LOGO } from "@/lib/constants";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { useDeleteAccount } from "@/lib/query";
+import { useDeletePaymentMethod } from "@/lib/query";
 import { useEditPaymentMethodDialogStore } from "@/lib/stores";
 import { Issuer } from "@/lib/types";
 import { EllipsisIcon } from "lucide-react";
@@ -36,16 +36,16 @@ export default function PaymentMethodCard({
     `삭제된 결제수단은 복구할 수 없습니다.`
   );
   const { onOpen: onEditPaymentMethodOpen } = useEditPaymentMethodDialogStore();
-  const { mutate: deleteAccount } = useDeleteAccount();
+  const { mutate: deletePaymentMethod } = useDeletePaymentMethod();
 
   function onEditPaymentMethod() {
     onEditPaymentMethodOpen(id);
   }
 
-  async function onDeleteAccount() {
+  async function onDeletePaymentMethod() {
     const ok = await confirm();
     if (ok) {
-      deleteAccount(id);
+      deletePaymentMethod(id);
     }
   }
 
@@ -81,7 +81,9 @@ export default function PaymentMethodCard({
               >
                 수정
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={isCash ? undefined : onDeleteAccount}>
+              <DropdownMenuItem
+                onClick={isCash ? undefined : onDeletePaymentMethod}
+              >
                 삭제
               </DropdownMenuItem>
             </DropdownMenuContent>
