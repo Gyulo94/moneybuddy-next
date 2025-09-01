@@ -14,3 +14,8 @@ export {
   useFindAccountsByUserId,
   useUpdateAccount,
 } from "./account";
+
+export {
+  useCreatePaymentMethod,
+  useFindPaymentMethodsByUserId,
+} from "./payment-method";

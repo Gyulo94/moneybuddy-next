@@ -19,7 +19,7 @@ import { BANKS, DEFAULT_BANK_LOGO } from "@/lib/constants";
 import { AccountFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod/v3";
 
@@ -35,7 +35,18 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
     resolver: zodResolver(AccountFormSchema),
     defaultValues,
   });
-  const [logo, setLogo] = useState<string>(defaultValues.logo || "");
+  const selectedBankId = form.watch("bankId");
+  const selectedBankLogo = BANKS.find((bank) => bank.id === selectedBankId)
+    ?.logo!;
+  const [logo, setLogo] = useState<string>("");
+
+  useEffect(() => {
+    if (selectedBankId) {
+      console.log(selectedBankId);
+
+      setLogo(selectedBankLogo);
+    }
+  }, [selectedBankId]);
 
   return (
     <Form {...form}>
@@ -78,16 +89,7 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
                 <FormItem>
                   <FormLabel>은행명</FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={(selected) => {
-                        field.onChange(selected);
-                        const selectedBank = BANKS.find(
-                          (bank) => bank.id === selected
-                        );
-                        setLogo(selectedBank?.logo!);
-                      }}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="계좌 유형을 선택하세요." />
                       </SelectTrigger>
