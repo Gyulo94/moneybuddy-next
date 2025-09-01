@@ -17,5 +17,7 @@ export {
 
 export {
   useCreatePaymentMethod,
+  useFindPaymentMethodById,
   useFindPaymentMethodsByUserId,
+  useUpdatePaymentMethod,
 } from "./payment-method";

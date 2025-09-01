@@ -7,7 +7,7 @@ import {
 import { DEFAULT_BANK_LOGO } from "@/lib/constants";
 import { useConfirm } from "@/lib/hooks/use-confirm";
 import { useDeleteAccount } from "@/lib/query";
-import { useEditAccountDialogStore } from "@/lib/stores";
+import { useEditPaymentMethodDialogStore } from "@/lib/stores";
 import { Issuer } from "@/lib/types";
 import { EllipsisIcon } from "lucide-react";
 import Image from "next/image";
@@ -35,7 +35,7 @@ export default function PaymentMethodCard({
     "정말로 결제수단을 삭제하시겠습니까?",
     `삭제된 결제수단은 복구할 수 없습니다.`
   );
-  const { onOpen: onEditPaymentMethodOpen } = useEditAccountDialogStore();
+  const { onOpen: onEditPaymentMethodOpen } = useEditPaymentMethodDialogStore();
   const { mutate: deleteAccount } = useDeleteAccount();
 
   function onEditPaymentMethod() {

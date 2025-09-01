@@ -68,6 +68,8 @@ export function PaymentMethodForm({
     }
     if (filteredIssuers.length > 0) {
       form.setValue("issuerId", filteredIssuers[0]?.id);
+    } else if (id && defaultValues.issuerId) {
+      form.setValue("issuerId", defaultValues.issuerId);
     } else {
       form.setValue("issuerId", "");
     }

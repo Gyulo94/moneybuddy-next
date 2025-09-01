@@ -3,4 +3,7 @@ export {
   useEditAccountDialogStore,
 } from "./account";
 
-export { useCreatePaymentMethodDialogStore } from "./payment-method";
+export {
+  useCreatePaymentMethodDialogStore,
+  useEditPaymentMethodDialogStore,
+} from "./payment-method";
