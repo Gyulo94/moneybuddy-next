@@ -23,7 +23,7 @@ export default function UserMenu() {
           <PopoverTrigger>
             <UserAvatar
               url={session?.user.image || DEFAULT_AVATAR}
-              name={session?.user.name!}
+              name={session?.user.name || ""}
               isTooltipEnabled={false}
               className="cursor-pointer"
             />
@@ -32,7 +32,7 @@ export default function UserMenu() {
             <div className="mb-4 w-full flex flex-col items-center justify-between">
               <UserAvatar
                 url={session?.user.image || DEFAULT_AVATAR}
-                name={session?.user.name!}
+                name={session?.user.name || ""}
                 isTooltipEnabled={false}
                 className="size-22 mb-2"
               />

@@ -13,6 +13,5 @@ export {
   useExpenseCategoryStore,
   useFilterStore,
   useIncomeCategoryStore,
-  useIncomeExpenseStore,
   useOpenTransactionDialogStore,
 } from "./transacation";

@@ -18,3 +18,19 @@ export type EditOpenState = {
   onOpen: (id: string) => void;
   onClose: () => void;
 };
+
+export type FieldError = {
+  type: string;
+  message?: string;
+  ref?: HTMLInputElement;
+  types?: MultipleFieldErrors;
+  root?: FieldError;
+};
+
+export type MultipleFieldErrors = {
+  [key: string]: FieldError["message"] | FieldError;
+};
+
+export type FormErrors<TFieldValues> = {
+  [K in keyof TFieldValues]?: FieldError;
+};

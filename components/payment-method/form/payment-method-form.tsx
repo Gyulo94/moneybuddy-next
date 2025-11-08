@@ -61,8 +61,8 @@ export function PaymentMethodForm({
     : "";
   const filteredIssuers = useFilteredIssuers(selectedBankId, ISSUERS, BANKS);
 
-  const selectedLogo = myAccounts.find((acc) => acc.id === selectedAccountId)
-    ?.bank?.logo!;
+  const selectedLogo =
+    myAccounts.find((acc) => acc.id === selectedAccountId)?.bank?.logo || "";
 
   useEffect(() => {
     if (selectedAccountId) {
@@ -75,7 +75,14 @@ export function PaymentMethodForm({
     } else {
       form.setValue("issuerId", "");
     }
-  }, [form, filteredIssuers]);
+  }, [
+    form,
+    filteredIssuers,
+    defaultValues.issuerId,
+    id,
+    selectedAccountId,
+    selectedLogo,
+  ]);
 
   return (
     <Form {...form}>

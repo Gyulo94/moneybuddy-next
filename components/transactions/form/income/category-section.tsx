@@ -23,7 +23,7 @@ export default function CategorySection({ form }: Props) {
 
   useEffect(() => {
     form.setValue("categoryId", selectedCategory?.id ?? "");
-  }, [selectedCategory, form.setValue]);
+  }, [selectedCategory, form.setValue, form]);
 
   useEffect(() => {
     if (form.formState?.isSubmitSuccessful) {

@@ -29,8 +29,7 @@ export default function EditAccountDialog() {
   };
 
   function onSubmit(values: z.infer<typeof AccountFormSchema>) {
-    const { logo, ...rest } = values;
-    updateAccount(rest, {
+    updateAccount(values, {
       onSuccess: onClose,
     });
   }

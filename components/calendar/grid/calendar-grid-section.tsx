@@ -6,7 +6,7 @@ import TotalAmountItem from "./total-amount-item";
 export default function CalendarGridSection() {
   const { showExpense, showIncome } = useFilterStore();
   const { onOpen } = useOpenTransactionDialogStore();
-  const { totalsByDate, isLoading, error, currentMonth, currentYear } =
+  const { totalsByDate, currentMonth, currentYear } =
     useCalendarTransactionData();
 
   // 날짜 클릭 핸들러

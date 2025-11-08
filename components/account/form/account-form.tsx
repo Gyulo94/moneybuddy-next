@@ -36,8 +36,8 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
     defaultValues,
   });
   const selectedBankId = form.watch("bankId");
-  const selectedBankLogo = BANKS.find((bank) => bank.id === selectedBankId)
-    ?.logo!;
+  const selectedBankLogo =
+    BANKS.find((bank) => bank.id === selectedBankId)?.logo || "";
   const [logo, setLogo] = useState<string>("");
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
 
       setLogo(selectedBankLogo);
     }
-  }, [selectedBankId]);
+  }, [selectedBankId, selectedBankLogo]);
 
   return (
     <Form {...form}>

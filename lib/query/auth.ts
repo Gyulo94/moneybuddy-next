@@ -11,7 +11,6 @@ import {
 } from "../actions";
 
 export function useLogin() {
-  const router = useRouter();
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: () => {

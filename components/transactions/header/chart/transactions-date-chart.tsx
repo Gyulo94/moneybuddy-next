@@ -7,7 +7,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { format } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 interface Transaction {
@@ -21,10 +21,10 @@ interface Transaction {
 export function TransactionsDateChart({ data }: { data?: Transaction[] }) {
   const KST_OFFSET = 9 * 60;
 
-  const toKstDate = (d: Date) => {
+  const toKstDate = useCallback((d: Date) => {
     const kst = new Date(d.getTime() + KST_OFFSET * 60 * 1000);
     return format(kst, "yyyy-MM-dd");
-  };
+  }, []);
 
   const getLast7Days = () => {
     const days: string[] = [];
@@ -47,23 +47,26 @@ export function TransactionsDateChart({ data }: { data?: Transaction[] }) {
 
   const last7Days = getLast7Days();
 
-  const parseDate = (dateString: string) => {
-    const first = dateString.split(" ")[0];
-    const parts = first.split("/");
-    let year = new Date().getFullYear();
-    let month = 1;
-    let day = 1;
-    if (parts.length >= 2) {
-      month = parseInt(parts[0], 10);
-      day = parseInt(parts[1], 10);
-      if (parts.length === 3) year = parseInt(parts[2], 10);
-    } else {
-      const parsed = new Date(dateString);
-      return toKstDate(parsed);
-    }
-    const utc = new Date(Date.UTC(year, month - 1, day));
-    return toKstDate(utc);
-  };
+  const parseDate = useCallback(
+    (dateString: string) => {
+      const first = dateString.split(" ")[0];
+      const parts = first.split("/");
+      let year = new Date().getFullYear();
+      let month = 1;
+      let day = 1;
+      if (parts.length >= 2) {
+        month = parseInt(parts[0], 10);
+        day = parseInt(parts[1], 10);
+        if (parts.length === 3) year = parseInt(parts[2], 10);
+      } else {
+        const parsed = new Date(dateString);
+        return toKstDate(parsed);
+      }
+      const utc = new Date(Date.UTC(year, month - 1, day));
+      return toKstDate(utc);
+    },
+    [toKstDate]
+  );
 
   const chartData = useMemo(() => {
     return last7Days.map((date) => {
@@ -91,7 +94,7 @@ export function TransactionsDateChart({ data }: { data?: Transaction[] }) {
         income: totalIncome,
       };
     });
-  }, [data]);
+  }, [data, last7Days, parseDate, toKstDate]);
 
   const chartConfig = {
     expense: {

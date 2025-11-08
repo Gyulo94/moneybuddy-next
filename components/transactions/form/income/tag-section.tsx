@@ -5,6 +5,7 @@ import { getCustomStyles, getTagColor } from "@/components/ui/tag-styles";
 import { useFindTagsByUserId } from "@/lib/query";
 import { Tag } from "@/lib/types/tag";
 import { IncomeFormSchema } from "@/lib/validations";
+import { TagSchema } from "@/lib/validations/transaction";
 import { Tags } from "lucide-react";
 import { useTheme } from "next-themes";
 import React from "react";
@@ -65,7 +66,9 @@ export default function TagSection({ form }: Props) {
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      const selected = (field.value || []) as any[];
+                      const selected = (field.value || []) as z.infer<
+                        typeof TagSchema
+                      >[];
                       if (selected.length >= MAX_TAGS) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -77,47 +80,53 @@ export default function TagSection({ form }: Props) {
                       e.stopPropagation();
                     }
                   }}
-                  value={(field.value || []).map((v: any) => {
-                    if (typeof v === "string") {
-                      const found = (tags || []).find((t: Tag) => t.name === v);
-                      return found
-                        ? {
-                            label: found.name,
-                            value: found.name,
-                            bgColor: found.bgColor,
-                            textColor: found.textColor,
-                          }
-                        : { label: v, value: v };
+                  value={(field.value || []).map(
+                    (v: string | z.infer<typeof TagSchema>) => {
+                      if (typeof v === "string") {
+                        const found = (tags || []).find(
+                          (t: Tag) => t.name === v
+                        );
+                        return found
+                          ? {
+                              label: found.name,
+                              value: found.name,
+                              bgColor: found.bgColor,
+                              textColor: found.textColor,
+                            }
+                          : { label: v, value: v };
+                      }
+                      return {
+                        label: v.name,
+                        value: v.name,
+                        bgColor: v.bgColor,
+                        textColor: v.textColor,
+                      };
                     }
-                    return {
-                      label: v.name,
-                      value: v.name,
-                      bgColor: v.bgColor,
-                      textColor: v.textColor,
-                    };
-                  })}
-                  onChange={(selected) =>
+                  )}
+                  onChange={(
+                    selected: ReadonlyArray<{
+                      value: string;
+                      bgColor?: string;
+                      textColor?: string;
+                    }> | null
+                  ) =>
                     field.onChange(
                       selected
-                        ? selected.map(
-                            (s: {
-                              value: string;
-                              bgColor: string;
-                              textColor: string;
-                            }) => ({
-                              name: s.value,
-                              bgColor: s.bgColor || "",
-                              textColor: s.textColor || "",
-                            })
-                          )
+                        ? selected.map((s) => ({
+                            name: s.value,
+                            bgColor: s.bgColor || "",
+                            textColor: s.textColor || "",
+                          }))
                         : []
                     )
                   }
-                  isOptionDisabled={(option: any) => {
-                    const selected = field.value || [];
+                  isOptionDisabled={(option: { value: string }) => {
+                    const selected = (field.value || []) as z.infer<
+                      typeof TagSchema
+                    >[];
                     return (
                       selected.length >= MAX_TAGS &&
-                      !selected.includes(option.value)
+                      !selected.some((t) => t.name === option.value)
                     );
                   }}
                   onCreateOption={(inputValue) => {

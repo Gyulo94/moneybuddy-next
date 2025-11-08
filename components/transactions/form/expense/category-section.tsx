@@ -29,7 +29,7 @@ export default function CategorySection({ form }: Props) {
   useEffect(() => {
     form.setValue("categoryId", selectedCategory?.id ?? "");
     form.setValue("subCategoryId", selectedSubCategory?.id ?? "");
-  }, [selectedCategory, selectedSubCategory, form.setValue]);
+  }, [selectedCategory, selectedSubCategory, form.setValue, form]);
 
   useEffect(() => {
     if (

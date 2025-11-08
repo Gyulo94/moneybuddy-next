@@ -5,7 +5,7 @@ import SubmitButton from "@/components/ui/submit-button";
 import { ExpenseFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod/v3";
 import CategorySection from "./category-section";
@@ -27,12 +27,28 @@ export default function ExpenseForm({ defaultValues, onSubmit }: Props) {
   });
 
   useEffect(() => {
-    const getMessages = (errors: any): string[] =>
-      Object.values(errors || {})
-        .flatMap((e: any) =>
-          e && typeof e.message === "string" ? [e.message] : getMessages(e)
-        )
+    const getMessages = (
+      errors: FieldErrors<z.infer<typeof ExpenseFormSchema>>
+    ): string[] => {
+      return Object.values(errors || {})
+        .flatMap((errorItem) => {
+          if (typeof errorItem === "string") {
+            return [errorItem];
+          }
+          if (
+            errorItem &&
+            typeof errorItem === "object" &&
+            "message" in errorItem &&
+            typeof errorItem.message === "string"
+          ) {
+            return [errorItem.message];
+          }
+          return getMessages(
+            errorItem as FieldErrors<z.infer<typeof ExpenseFormSchema>>
+          );
+        })
         .filter(Boolean);
+    };
 
     const messages = getMessages(form.formState.errors);
     messages.forEach((m) => toast.error(m));
