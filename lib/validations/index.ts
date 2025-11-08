@@ -7,3 +7,5 @@ export {
 export { AccountFormSchema, AccountTypeSchema } from "./account";
 
 export { PaymentMethodFormSchema } from "./payment-method";
+
+export { ExpenseFormSchema, IncomeFormSchema } from "./transaction";

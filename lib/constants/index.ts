@@ -7,5 +7,7 @@ export const DEFAULT_BANK_LOGO = "/images/logos/default-bank-logo.png";
 
 export { ACCOUNT_TYPES } from "./account";
 export { BANKS } from "./bank";
+export { DAYS_OF_WEEK } from "./calendar";
+export { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "./category";
 export { ISSUERS } from "./issuer";
 export { METHOD_TYPES } from "./payment-method";

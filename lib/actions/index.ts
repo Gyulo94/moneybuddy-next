@@ -22,3 +22,11 @@ export {
   findPaymentMethodsByUserId,
   updatePaymentMethod,
 } from "./payment-method";
+
+export {
+  createExpense,
+  createIncome,
+  findTransactionsByMonth,
+} from "./transaction";
+
+export { findTagsByUserId } from "./tag";

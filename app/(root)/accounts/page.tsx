@@ -25,25 +25,23 @@ export default async function AccountPage() {
   const state = dehydrate(queryClient);
 
   return (
-    <div className="px-2 w-full max-w-7xl mx-auto lg:px-0">
-      <Tabs defaultValue="paymentMethod">
-        <TabsList>
-          <TabsTrigger value="paymentMethod">카드</TabsTrigger>
-          <TabsTrigger value="account">계좌</TabsTrigger>
-        </TabsList>
-        <HydrationBoundary state={state}>
-          <TabsContent value="paymentMethod" className="relative">
-            <CreateAccountButton type={"paymentMethod"} />
-            <PaymentMethodContent />
-          </TabsContent>
-        </HydrationBoundary>
-        <HydrationBoundary state={state}>
-          <TabsContent value="account" className="relative">
-            <CreateAccountButton type={"account"} />
-            <AccountContent />
-          </TabsContent>
-        </HydrationBoundary>
-      </Tabs>
-    </div>
+    <Tabs defaultValue="paymentMethod">
+      <TabsList>
+        <TabsTrigger value="paymentMethod">카드</TabsTrigger>
+        <TabsTrigger value="account">계좌</TabsTrigger>
+      </TabsList>
+      <HydrationBoundary state={state}>
+        <TabsContent value="paymentMethod" className="relative">
+          <CreateAccountButton type={"paymentMethod"} />
+          <PaymentMethodContent />
+        </TabsContent>
+      </HydrationBoundary>
+      <HydrationBoundary state={state}>
+        <TabsContent value="account" className="relative">
+          <CreateAccountButton type={"account"} />
+          <AccountContent />
+        </TabsContent>
+      </HydrationBoundary>
+    </Tabs>
   );
 }

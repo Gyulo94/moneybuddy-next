@@ -58,7 +58,7 @@ export default function AccountCard({
         <CardHeader className="flex items-center justify-between px-2">
           <CardTitle>
             {title}
-            {bank && (
+            {bank && accountNumber && (
               <span className="ml-2 text-muted-foreground font-normal text-xs">
                 {bank.name}({accountNumber})
               </span>

@@ -8,6 +8,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -35,14 +36,16 @@ export default async function RootLayout({
       <body className={`${pretendard.variable} font-pretendard antialiased`}>
         <SessionProvider session={session}>
           <QueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-            <Toaster />
+            <NuqsAdapter>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                disableTransitionOnChange
+              >
+                {children}
+              </ThemeProvider>
+              <Toaster />
+            </NuqsAdapter>
             <OpenProvider />
           </QueryProvider>
         </SessionProvider>

@@ -138,7 +138,6 @@ export function AccountForm({ id, onSubmit, defaultValues, onClose }: Props) {
                   value={field.value.toLocaleString()}
                   onChange={(e) => {
                     const value = e.target.value.replace(/,/g, "");
-
                     field.onChange(isNaN(Number(value)) ? 0 : Number(value));
                   }}
                 />

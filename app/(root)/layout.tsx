@@ -18,7 +18,11 @@ export default async function RootLayout({
             </div>
             <Navbar />
           </div>
-          <div className="p-0 md:p-4 pt-2">{children}</div>
+          <div className="p-0 md:p-4 pt-2">
+            <div className="px-2 w-full max-w-7xl mx-auto lg:px-0">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </SidebarProvider>

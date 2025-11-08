@@ -8,6 +8,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
+  CalendarIcon,
   CreditCardIcon,
   LayoutDashboardIcon,
   ReceiptTextIcon,
@@ -26,8 +27,13 @@ export default function NavMain() {
     },
     {
       label: "수입/지출 내역",
-      href: "/transactions",
+      href: `/transactions`,
       icon: ReceiptTextIcon,
+    },
+    {
+      label: "캘린더",
+      href: "/calendars",
+      icon: CalendarIcon,
     },
     {
       label: "카드/계좌",
