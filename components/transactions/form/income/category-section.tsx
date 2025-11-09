@@ -1,3 +1,4 @@
+import { FormField } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import { useIncomeCategoryStore } from "@/lib/stores";
 import { Category } from "@/lib/types";
 import { IncomeFormSchema } from "@/lib/validations";
 import { useEffect } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import z from "zod/v3";
 
 interface Props {
@@ -20,10 +21,16 @@ interface Props {
 
 export default function CategorySection({ form }: Props) {
   const { selectedCategory, setSelectedCategory } = useIncomeCategoryStore();
+  const watchedCategoryId = useWatch({
+    control: form.control,
+    name: "categoryId",
+  }) as string | undefined;
 
   useEffect(() => {
-    form.setValue("categoryId", selectedCategory?.id ?? "");
-  }, [selectedCategory, form.setValue, form]);
+    const cat =
+      INCOME_CATEGORIES.find((c) => c.id === watchedCategoryId) ?? null;
+    setSelectedCategory(cat);
+  }, [watchedCategoryId, setSelectedCategory]);
 
   useEffect(() => {
     if (form.formState?.isSubmitSuccessful) {
@@ -42,32 +49,38 @@ export default function CategorySection({ form }: Props) {
         <span className="text-sm">{selectedCategory?.icon}</span>
       </div>
       <div className="ml-10">
-        <Select
-          value={selectedCategory?.id || ""}
+        <FormField
+          control={form.control}
           name="categoryId"
-          onValueChange={(value) =>
-            setSelectedCategory(
-              INCOME_CATEGORIES.find((cat) => cat.id === value) ?? null
-            )
-          }
-        >
-          <SelectTrigger className="w-full mb-3">
-            <SelectValue placeholder="카테고리" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {INCOME_CATEGORIES.map((category: Category) => (
-                <SelectItem
-                  key={category.id}
-                  value={category.id || ""}
-                  className="cursor-pointer"
-                >
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          render={({ field }) => (
+            <Select
+              value={field.value || selectedCategory?.id || ""}
+              name="categoryId"
+              onValueChange={(value) =>
+                setSelectedCategory(
+                  INCOME_CATEGORIES.find((cat) => cat.id === value) ?? null
+                )
+              }
+            >
+              <SelectTrigger className="w-full mb-3">
+                <SelectValue placeholder="카테고리" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {INCOME_CATEGORIES.map((category: Category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id || ""}
+                      className="cursor-pointer"
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
     </div>
   );

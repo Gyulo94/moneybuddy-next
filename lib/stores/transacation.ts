@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Category, SubCategory } from "../types";
+import { Category, EditOpenState, SubCategory } from "../types";
 
 interface CheckedItemsState {
   checkedItems: { [key: number]: boolean };
@@ -75,5 +75,21 @@ export const useOpenTransactionDialogStore = create<TransactionDialogState>(
     isOpen: false,
     onOpen: (date) => set({ date, isOpen: true }),
     onClose: () => set({ date: undefined, isOpen: false }),
+  })
+);
+
+interface EditTransactionDialogState extends EditOpenState {
+  id: string | undefined;
+  isOpen: boolean;
+  onOpen: (id: string) => void;
+  onClose: () => void;
+}
+
+export const useEditTransactionDialogStore = create<EditTransactionDialogState>(
+  (set) => ({
+    id: undefined,
+    isOpen: false,
+    onOpen: (id) => set({ id, isOpen: true }),
+    onClose: () => set({ id: undefined, isOpen: false }),
   })
 );

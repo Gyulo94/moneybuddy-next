@@ -14,8 +14,8 @@ import {
 import { Account, PaymentMethod } from "@/lib/types";
 import { ExpenseFormSchema } from "@/lib/validations";
 import { CreditCardIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useEffect } from "react";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import z from "zod/v3";
 
 interface Props {
@@ -23,9 +23,12 @@ interface Props {
 }
 
 export default function PaymentOptionSection({ form }: Props) {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
-    "CARD" | "ACCOUNT" | ""
-  >("");
+  const watchedMethod = useWatch({ control: form.control, name: "method" }) as
+    | "CARD"
+    | "ACCOUNT"
+    | ""
+    | undefined;
+  const selectedPaymentMethod = watchedMethod ?? "";
 
   const { data: cardList, isLoading: cardIsLoading } =
     useFindPaymentMethodsByUserId();
@@ -57,7 +60,6 @@ export default function PaymentOptionSection({ form }: Props) {
             <Select
               value={selectedPaymentMethod}
               onValueChange={(value: "" | "CARD" | "ACCOUNT") => {
-                setSelectedPaymentMethod(value);
                 field.onChange(value);
               }}
             >

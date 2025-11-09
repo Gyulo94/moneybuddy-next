@@ -1,4 +1,8 @@
-import { useCheckedItemsStore, useFilterStore } from "@/lib/stores";
+import {
+  useCheckedItemsStore,
+  useEditTransactionDialogStore,
+  useFilterStore,
+} from "@/lib/stores";
 import { TransactionDetail } from "@/lib/types";
 import { Checkbox } from "../../ui/checkbox";
 
@@ -10,6 +14,7 @@ export default function TransactionDetailItem({ detail }: Props) {
   const { showExpense, showIncome } = useFilterStore();
   const { isDeleteMode, checkedItems, setCheckedItems } =
     useCheckedItemsStore();
+  const { onOpen } = useEditTransactionDialogStore();
 
   const handleCheckboxChange = (id: string) => {
     const updatedCheckedItems = {
@@ -26,6 +31,7 @@ export default function TransactionDetailItem({ detail }: Props) {
           ? "hover:bg-red-600/10"
           : "hover:bg-blue-600/10"
       }`}
+      onClick={() => onOpen(detail.id)}
     >
       <div className="px-6 flex justify-start items-center w-full">
         {isDeleteMode && (

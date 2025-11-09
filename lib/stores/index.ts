@@ -10,6 +10,7 @@ export {
 
 export {
   useCheckedItemsStore,
+  useEditTransactionDialogStore,
   useExpenseCategoryStore,
   useFilterStore,
   useIncomeCategoryStore,

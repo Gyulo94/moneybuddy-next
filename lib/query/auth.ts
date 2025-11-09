@@ -30,6 +30,9 @@ export function useLogin() {
 export function useSignup() {
   const mutation = useMutation({
     mutationFn: signup,
+    onSuccess: () => {
+      window.location.href = "/dashboard";
+    },
     onError: (error) => {
       if (error instanceof Error) {
         toast.error(error.message);

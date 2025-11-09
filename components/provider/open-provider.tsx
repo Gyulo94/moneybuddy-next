@@ -3,6 +3,7 @@ import EditAccountDialog from "../account/form/edit-account-dialog";
 import CreatePaymentMethodDialog from "../payment-method/form/create-payment-method-dialog";
 import EditPaymentMethodDialog from "../payment-method/form/edit-payment-method-dialog";
 import CreateTransactionDialog from "../transactions/form/create-transaction-dialog";
+import EditTransactionDialog from "../transactions/form/edit-transaction-dialog";
 
 export default function OpenProvider() {
   return (
@@ -12,6 +13,7 @@ export default function OpenProvider() {
       <CreatePaymentMethodDialog />
       <EditPaymentMethodDialog />
       <CreateTransactionDialog />
+      <EditTransactionDialog />
     </>
   );
 }

@@ -26,7 +26,10 @@ export {
 export {
   useCreateExpense,
   useCreateIncome,
+  useFindTransactionById,
   useFindTransactionsByMonth,
+  useUpdateExpense,
+  useUpdateIncome,
 } from "./transaction";
 
 export { useFindTagsByUserId } from "./tag";

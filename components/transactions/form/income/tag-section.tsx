@@ -51,7 +51,8 @@ export default function TagSection({ form }: Props) {
             <FormItem>
               <FormControl>
                 <CreatableSelect
-                  options={(isLoading ? [] : tags).map((t: Tag) => ({
+                  isLoading={isLoading}
+                  options={(tags ?? []).map((t: Tag) => ({
                     label: t.name,
                     value: t.name,
                     bgColor: t.bgColor,
@@ -83,7 +84,7 @@ export default function TagSection({ form }: Props) {
                   value={(field.value || []).map(
                     (v: string | z.infer<typeof TagSchema>) => {
                       if (typeof v === "string") {
-                        const found = (tags || []).find(
+                        const found = (tags ?? []).find(
                           (t: Tag) => t.name === v
                         );
                         return found

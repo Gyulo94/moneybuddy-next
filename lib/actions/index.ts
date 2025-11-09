@@ -26,7 +26,10 @@ export {
 export {
   createExpense,
   createIncome,
+  findTransactionById,
   findTransactionsByMonth,
+  updateExpense,
+  updateIncome,
 } from "./transaction";
 
 export { findTagsByUserId } from "./tag";

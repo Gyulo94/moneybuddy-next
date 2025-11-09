@@ -26,6 +26,10 @@ export default function IncomeForm({ defaultValues, onSubmit }: Props) {
   });
 
   useEffect(() => {
+    if (defaultValues) form.reset(defaultValues);
+  }, [defaultValues, form]);
+
+  useEffect(() => {
     const getMessages = (
       errors: FieldErrors<z.infer<typeof IncomeFormSchema>>
     ): string[] => {

@@ -27,6 +27,10 @@ export default function ExpenseForm({ defaultValues, onSubmit }: Props) {
   });
 
   useEffect(() => {
+    if (defaultValues) form.reset(defaultValues);
+  }, [defaultValues, form]);
+
+  useEffect(() => {
     const getMessages = (
       errors: FieldErrors<z.infer<typeof ExpenseFormSchema>>
     ): string[] => {
