@@ -28,6 +28,7 @@ export const IncomeFormSchema = z.object({
   amount: z.number().min(0, "금액을 입력하세요."),
   date: z.string().min(1, "유효한 날짜를 입력하세요."),
   time: z.string().min(1, "시간을 입력하세요."),
+  method: z.string().min(1, "수단을 선택하세요."),
   tags: z.array(TagSchema).min(1, "태그를 선택하세요."),
   type: z.string().min(1, "유형을 선택하세요."),
   memo: z.string().optional(),

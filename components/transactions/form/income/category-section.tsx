@@ -56,11 +56,12 @@ export default function CategorySection({ form }: Props) {
             <Select
               value={field.value || selectedCategory?.id || ""}
               name="categoryId"
-              onValueChange={(value) =>
+              onValueChange={(value) => {
+                field.onChange(value);
                 setSelectedCategory(
                   INCOME_CATEGORIES.find((cat) => cat.id === value) ?? null
-                )
-              }
+                );
+              }}
             >
               <SelectTrigger className="w-full mb-3">
                 <SelectValue placeholder="카테고리" />

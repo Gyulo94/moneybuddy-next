@@ -46,6 +46,7 @@ export default function CreateTransactionDialog() {
     time: "",
     type: "INCOME",
     tags: [],
+    method: "ACCOUNT",
     memo: "",
   };
 
