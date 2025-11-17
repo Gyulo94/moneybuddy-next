@@ -27,11 +27,13 @@ export default function TransactionDetailItem({ detail }: Props) {
     <li
       key={detail.id}
       className={`flex py-3 cursor-pointer ${
-        detail.type === "EXPENSE"
-          ? "hover:bg-red-600/10"
-          : "hover:bg-blue-600/10"
+        detail.type === "EXPENSE" ? "bg-red-600/10" : "bg-blue-600/10"
       }`}
-      onClick={() => onOpen(detail.id)}
+      onClick={() => {
+        if (!isDeleteMode) {
+          onOpen(detail.id);
+        }
+      }}
     >
       <div className="px-6 flex justify-start items-center w-full">
         {isDeleteMode && (
@@ -50,12 +52,12 @@ export default function TransactionDetailItem({ detail }: Props) {
               <div
                 className="absolute -bottom-3 -left-6 md:-left-11 md:-bottom-0.5 size-6 flex items-center justify-center rounded-full"
                 style={{
-                  backgroundColor: detail.category.color || "",
+                  backgroundColor: detail.category?.color || "",
                 }}
               >
-                <span className="text-sm">{detail.category.icon || ""}</span>
+                <span className="text-sm">{detail.category?.icon || ""}</span>
               </div>
-              <p className="hidden md:block">{detail.category.name}</p>
+              <p className="hidden md:block">{detail.category?.name}</p>
             </div>
           </div>
           <p className="text-sm text-gray-700 dark:text-gray-300 text-left md:w-[15%] hidden md:block">
@@ -75,7 +77,7 @@ export default function TransactionDetailItem({ detail }: Props) {
             원
           </div>
           <div className="text-sm md:w-[15%] text-muted-foreground hidden md:block">
-            {detail.tags.map((tag) => (
+            {detail.tags?.map((tag) => (
               <span key={tag.id}>#{tag.name} </span>
             ))}
           </div>

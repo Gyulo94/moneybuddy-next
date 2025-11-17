@@ -34,7 +34,7 @@ export default function TransactionsDateList() {
       <CardContent className="p-0">
         <CustomToolbar date={value} onNavigate={handleNavigate} />
 
-        <div className="w-full">
+        <div className="w-full rounded-md border shadow-md">
           {transactions.map((transaction) => {
             const totalAmount = transaction.details.reduce(
               (sum: number, detail: TransactionDetail) => {
@@ -47,7 +47,7 @@ export default function TransactionsDateList() {
             );
 
             return (
-              <div key={transaction.date} className="border-t leading-11 ">
+              <div key={transaction.date} className="border-t leading-11">
                 {/* 날짜와 총 금액 */}
                 <TransactionDetailHeader
                   transaction={transaction}
