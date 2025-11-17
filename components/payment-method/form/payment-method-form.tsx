@@ -51,37 +51,45 @@ export function PaymentMethodForm({
     defaultValues,
   });
   const [logo, setLogo] = useState<string>("");
-  const { data } = useFindAccountsByUserId();
-  const myAccounts: Account[] = data ?? [];
+  const { data: accountData } = useFindAccountsByUserId();
+  const myAccounts: Account[] = accountData ?? [];
 
   const selectedAccountId = form.watch("accountId");
+  const selectedIssuerId = form.watch("issuerId");
 
   const selectedBankId = selectedAccountId
     ? myAccounts.find((acc) => acc.id === selectedAccountId)?.bank?.id
     : "";
+
   const filteredIssuers = useFilteredIssuers(selectedBankId, ISSUERS, BANKS);
 
-  const selectedLogo =
+  const selectedAccountLogo =
     myAccounts.find((acc) => acc.id === selectedAccountId)?.bank?.logo || "";
+  const selectedIssuerLogo =
+    filteredIssuers.find((issuer) => issuer.id === selectedIssuerId)?.logo ||
+    "";
 
   useEffect(() => {
-    if (selectedAccountId) {
-      setLogo(selectedLogo);
-    }
-    if (filteredIssuers.length > 0) {
-      form.setValue("issuerId", filteredIssuers[0]?.id);
-    } else if (id && defaultValues.issuerId) {
+    setLogo(selectedIssuerId ? selectedIssuerLogo : selectedAccountLogo);
+    if (form.getValues("issuerId")) return;
+    if (
+      id &&
+      defaultValues.issuerId &&
+      selectedAccountId === defaultValues.accountId
+    ) {
       form.setValue("issuerId", defaultValues.issuerId);
-    } else {
-      form.setValue("issuerId", "");
+      return;
     }
+    form.setValue("issuerId", filteredIssuers[0]?.id ?? "");
   }, [
     form,
     filteredIssuers,
     defaultValues.issuerId,
     id,
     selectedAccountId,
-    selectedLogo,
+    selectedAccountLogo,
+    selectedIssuerLogo,
+    selectedIssuerId,
   ]);
 
   return (
