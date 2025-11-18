@@ -21,10 +21,17 @@ const chartConfig = {
 } satisfies ChartConfig;
 export default function DashboardDailySpendingChart() {
   const [{ year, month }] = useDateFilters();
-  const currentDate = getCurrentDate({ year, month });
 
   const safeYear = year ?? new Date().getFullYear();
   const safeMonth = month ?? new Date().getMonth() + 1;
+  const safeDay = new Date().getDate();
+
+  const currentDate = getCurrentDate({
+    year: safeYear,
+    month: safeMonth,
+    day: safeDay,
+  });
+  console.log(safeDay);
 
   const {
     data: budgetData,
@@ -39,76 +46,75 @@ export default function DashboardDailySpendingChart() {
     isError: isTransactionsError,
   } = useFindTransactionsByMonth(currentDate);
 
-  const spentAmount = useMemo(() => {
+  const todaySpentAmount = useMemo(() => {
     if (!transactionsByDate) return 0;
+
+    const targetMMDD = `${safeMonth}/${safeDay}`;
+
+    console.log(targetMMDD);
+
+    const todayData = transactionsByDate.find((dayData: TransactionByDate) => {
+      return dayData.date.startsWith(targetMMDD);
+    });
+
+    if (!todayData) return 0;
+
     let totalExpense = 0;
-    transactionsByDate.forEach((transactionByDate: TransactionByDate) => {
-      transactionByDate.details.forEach((detail: TransactionDetail) => {
-        if (detail.type === "EXPENSE") {
-          totalExpense += detail.amount;
-        }
-      });
+    todayData.details.forEach((transaction: TransactionDetail) => {
+      if (transaction.type === "EXPENSE") {
+        totalExpense += transaction.amount;
+      }
     });
     return totalExpense;
-  }, [transactionsByDate]);
+  }, [transactionsByDate, currentDate]);
 
   const daysInMonth = new Date(safeYear, safeMonth, 0).getDate();
-  const today = new Date();
 
-  const daysPassedInMonth = useMemo(() => {
-    if (year === today.getFullYear() && month === today.getMonth() + 1) {
-      return today.getDate();
-    } else if (
-      safeYear < today.getFullYear() ||
-      (safeYear === today.getFullYear() && safeMonth < today.getMonth() + 1)
-    ) {
-      return daysInMonth;
-    }
-    return 1;
-  }, [year, month, daysInMonth, today]);
+  const goalDailyBudget =
+    daysInMonth === 0 ? 0 : Math.floor(budgetAmount / daysInMonth);
+
+  let utilizationRate =
+    goalDailyBudget === 0 ? 0 : (todaySpentAmount / goalDailyBudget) * 100;
+
+  const chartDisplayRate = Math.min(utilizationRate, 100);
+
+  const status = todaySpentAmount > goalDailyBudget ? "위험" : "양호";
+  const barColor = status === "위험" ? "#dc3545" : "#37cc33";
 
   if (isBudgetLoading || isTransactionsLoading) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>로딩 중...</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          로딩 중...
+        </CardContent>
       </Card>
     );
   }
   if (isBudgetError || isTransactionsError) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>데이터 로드 중 에러가 발생했습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          데이터 로드 중 에러가 발생했습니다.
+        </CardContent>
       </Card>
     );
   }
 
-  if (budgetAmount === 0 || transactionsByDate === null) {
+  if (budgetAmount === 0 || !budgetData) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
           일일 지출 상태를 확인하려면 월 예산을 설정해주세요.
         </CardContent>
       </Card>
     );
   }
 
-  const goalDailyBudget = Math.floor(budgetAmount / daysInMonth);
-
-  const spentDailyAverage =
-    daysPassedInMonth === 0 ? 0 : Math.floor(spentAmount / daysPassedInMonth);
-
-  let utilizationRate = (spentDailyAverage / goalDailyBudget) * 100;
-
-  const chartDisplayRate = Math.min(utilizationRate, 100);
-
-  const status = spentDailyAverage > goalDailyBudget ? "위험" : "양호";
-  const barColor = status === "위험" ? "#dc3545" : "#37cc33";
-
   const chartData = [
     { name: "today", amount: chartDisplayRate, fill: barColor },
   ];
-
   const endAngle = 180 - (chartDisplayRate / 100) * 180;
+
   return (
     <Card className="flex flex-col py-6">
       <CardHeader className="text-md float-left font-medium pb-0">
@@ -153,7 +159,7 @@ export default function DashboardDailySpendingChart() {
                           className="font-semibold"
                           style={{ fill: barColor }}
                         >
-                          {spentDailyAverage.toLocaleString()}원
+                          {todaySpentAmount.toLocaleString()}원
                         </tspan>
                         <tspan
                           x={(viewBox.cx || 0) + 15}

@@ -54,23 +54,29 @@ export default function DashboardBudgetChart() {
 
   if (isBudgetLoading || isTransactionsLoading) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>로딩 중...</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          로딩 중...
+        </CardContent>
       </Card>
     );
   }
   if (isBudgetError || isTransactionsError) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>데이터 로드 중 에러가 발생했습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          데이터 로드 중 에러가 발생했습니다.
+        </CardContent>
       </Card>
     );
   }
 
   if (!budgetData) {
     return (
-      <Card className="flex flex-col py-6">
-        <CardContent>월 예산이 등록되지 않았습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          예산 소진율 상태를 확인하려면 월 예산을 설정해주세요.
+        </CardContent>
       </Card>
     );
   }
