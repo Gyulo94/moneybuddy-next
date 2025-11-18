@@ -32,4 +32,6 @@ export {
   updateIncome,
 } from "./transaction";
 
+export { createBudget, findBudget } from "./budget";
+
 export { findTagsByUserId } from "./tag";

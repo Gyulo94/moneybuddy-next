@@ -99,7 +99,7 @@ export async function updateExpense(
   const token = session?.serverTokens.accessToken;
   try {
     const response = await axios.put(
-      `${SERVER_URL}/transaction/expense/${id}/update`,
+      `${SERVER_URL}/transaction/expense/update/${id}`,
       values,
       {
         headers: {
@@ -125,7 +125,7 @@ export async function updateIncome(
   const token = session?.serverTokens.accessToken;
   try {
     const response = await axios.put(
-      `${SERVER_URL}/transaction/income/${id}/update`,
+      `${SERVER_URL}/transaction/income/update/${id}`,
       values,
       {
         headers: {

@@ -32,4 +32,6 @@ export {
   useUpdateIncome,
 } from "./transaction";
 
+export { useCreateBudget, useFindBudget } from "./budget";
+
 export { useFindTagsByUserId } from "./tag";

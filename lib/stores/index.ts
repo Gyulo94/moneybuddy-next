@@ -16,3 +16,5 @@ export {
   useIncomeCategoryStore,
   useOpenTransactionDialogStore,
 } from "./transacation";
+
+export { useCreateBudgetDialogStore } from "./budget";

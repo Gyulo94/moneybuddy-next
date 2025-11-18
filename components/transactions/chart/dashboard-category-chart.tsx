@@ -29,7 +29,6 @@ export default function DashboardCategoryChart() {
   const [{ year, month }] = useDateFilters();
   const currentDate = getCurrentDate({ year, month });
   const { data: transactionsByDate } = useFindTransactionsByMonth(currentDate);
-  console.log(transactionsByDate);
 
   const categoryExpenseForDonutChart: DonutChartData[] = useMemo(() => {
     if (!transactionsByDate) return [];

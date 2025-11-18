@@ -1,5 +1,6 @@
 export type { Account, AccountType } from "./account";
 export type { Bank } from "./bank";
+export type { Budget } from "./budget";
 export type { Category, SubCategory } from "./category";
 export type { Issuer } from "./issuer";
 export type { MethodType, PaymentMethod } from "./payment-method";

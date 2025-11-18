@@ -5,14 +5,32 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { findBudget } from "@/lib/actions";
 import { LOGO } from "@/lib/constants";
+import { getQueryClient } from "@/lib/query/provider/get-query-client";
+import MonthlyBudget from "../../budget/monthly-budget";
 import NavMain from "./nav-main";
 
-export function AppSidebar() {
+interface Props {
+  searchParams: Promise<{ year?: string; month?: string }>;
+}
+
+export async function AppSidebar({ searchParams }: Props) {
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth() + 1;
+
+  const queryClient = getQueryClient();
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["budget", { year, month }],
+      queryFn: () => findBudget(year, month),
+    }),
+  ]);
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="bg-background">
-        <div className="flex items-center">
+      <SidebarHeader className="bg-background border-b">
+        <div className="flex items-center p-2.5">
           <Avatar>
             <AvatarImage src={LOGO} alt={LOGO} />
           </Avatar>
@@ -24,6 +42,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-background">
+        <MonthlyBudget />
         <NavMain />
       </SidebarContent>
     </Sidebar>
