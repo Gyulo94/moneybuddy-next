@@ -9,33 +9,106 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { getCurrentDate, useDateFilters } from "@/lib/hooks";
+import { useFindBudget, useFindTransactionsByMonth } from "@/lib/query";
+import { TransactionByDate, TransactionDetail } from "@/lib/types";
+import { useMemo } from "react";
 
-const goalAmount = 1000000; // 목표 금액 100만원
-const spentAmount = 596155; // 지출 금액 596,155원
-const daysSpent = 5; // 지출한 일수
-const daysInMonth = 30; // 한 달의 일수 (예시로 30일 사용)
-const goalDailyBudget = Math.floor(goalAmount / daysInMonth); // 목표 하루 예산 (소수점 제거)
-const spentDailyAverage = Math.floor(spentAmount / daysSpent); // 하루 평균 지출 금액
-let utilizationRate = (spentDailyAverage / goalDailyBudget) * 100; // 소진율 계산
-
-// 지출 금액이 목표 금액보다 높으면 100%로 설정
-if (utilizationRate > 100) {
-  utilizationRate = 100;
-}
-
-const endAngle = 180 - (utilizationRate / 100) * 180;
-const status = spentDailyAverage > goalDailyBudget ? "위험" : "양호";
-const barColor = status === "위험" ? "#dc3545" : "#37cc33";
-
-const chartData = [{ name: "today", amount: utilizationRate, fill: barColor }];
 const chartConfig = {
-  mobile: {
-    label: "desktop",
-    color: "hsl(var(--chart-1))",
+  amount: {
+    label: "금액",
   },
 } satisfies ChartConfig;
-
 export default function DashboardDailySpendingChart() {
+  const [{ year, month }] = useDateFilters();
+  const currentDate = getCurrentDate({ year, month });
+
+  const safeYear = year ?? new Date().getFullYear();
+  const safeMonth = month ?? new Date().getMonth() + 1;
+
+  const {
+    data: budgetData,
+    isLoading: isBudgetLoading,
+    isError: isBudgetError,
+  } = useFindBudget(safeYear, safeMonth);
+  const budgetAmount = budgetData?.amount ?? 0;
+
+  const {
+    data: transactionsByDate,
+    isLoading: isTransactionsLoading,
+    isError: isTransactionsError,
+  } = useFindTransactionsByMonth(currentDate);
+
+  const spentAmount = useMemo(() => {
+    if (!transactionsByDate) return 0;
+    let totalExpense = 0;
+    transactionsByDate.forEach((transactionByDate: TransactionByDate) => {
+      transactionByDate.details.forEach((detail: TransactionDetail) => {
+        if (detail.type === "EXPENSE") {
+          totalExpense += detail.amount;
+        }
+      });
+    });
+    return totalExpense;
+  }, [transactionsByDate]);
+
+  const daysInMonth = new Date(safeYear, safeMonth, 0).getDate();
+  const today = new Date();
+
+  const daysPassedInMonth = useMemo(() => {
+    if (year === today.getFullYear() && month === today.getMonth() + 1) {
+      return today.getDate();
+    } else if (
+      safeYear < today.getFullYear() ||
+      (safeYear === today.getFullYear() && safeMonth < today.getMonth() + 1)
+    ) {
+      return daysInMonth;
+    }
+    return 1;
+  }, [year, month, daysInMonth, today]);
+
+  if (isBudgetLoading || isTransactionsLoading) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>로딩 중...</CardContent>
+      </Card>
+    );
+  }
+  if (isBudgetError || isTransactionsError) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>데이터 로드 중 에러가 발생했습니다.</CardContent>
+      </Card>
+    );
+  }
+
+  if (budgetAmount === 0 || transactionsByDate === null) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>
+          일일 지출 상태를 확인하려면 월 예산을 설정해주세요.
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const goalDailyBudget = Math.floor(budgetAmount / daysInMonth);
+
+  const spentDailyAverage =
+    daysPassedInMonth === 0 ? 0 : Math.floor(spentAmount / daysPassedInMonth);
+
+  let utilizationRate = (spentDailyAverage / goalDailyBudget) * 100;
+
+  const chartDisplayRate = Math.min(utilizationRate, 100);
+
+  const status = spentDailyAverage > goalDailyBudget ? "위험" : "양호";
+  const barColor = status === "위험" ? "#dc3545" : "#37cc33";
+
+  const chartData = [
+    { name: "today", amount: chartDisplayRate, fill: barColor },
+  ];
+
+  const endAngle = 180 - (chartDisplayRate / 100) * 180;
   return (
     <Card className="flex flex-col py-6">
       <CardHeader className="text-md float-left font-medium pb-0">
