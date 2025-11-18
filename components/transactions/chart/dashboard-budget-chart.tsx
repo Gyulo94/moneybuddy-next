@@ -10,25 +10,80 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-
-const goalAmount = 1000000; // 목표 금액 100만원
-const spentAmount = 596155; // 지출 금액 596,155원
-const utilizationRate = Math.floor((spentAmount / goalAmount) * 100); // 소진율 계산
-const barColor = utilizationRate > 100 ? "#dc3545" : "#37cc33";
-const chartData = [{ name: "소진율", amount: utilizationRate, fill: barColor }];
+import { getCurrentDate, useDateFilters } from "@/lib/hooks";
+import { useFindBudget, useFindTransactionsByMonth } from "@/lib/query";
+import { TransactionByDate, TransactionDetail } from "@/lib/types";
+import { useMemo } from "react";
 
 const chartConfig = {
-  visitors: {
-    label: "amount",
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
+  amount: {
+    label: "금액",
   },
 } satisfies ChartConfig;
 
 export default function DashboardBudgetChart() {
-  const endAngle = 90 + (utilizationRate / 100) * -360;
+  const [{ year, month }] = useDateFilters();
+  const currentDate = getCurrentDate({ year, month });
+
+  const safeYear = year ?? new Date().getFullYear();
+  const safeMonth = month ?? new Date().getMonth() + 1;
+  const {
+    data: budgetData,
+    isLoading: isBudgetLoading,
+    isError: isBudgetError,
+  } = useFindBudget(safeYear, safeMonth);
+  const {
+    data: transactionsByDate,
+    isLoading: isTransactionsLoading,
+    isError: isTransactionsError,
+  } = useFindTransactionsByMonth(currentDate);
+  const budgetAmount = budgetData?.amount ?? 0;
+
+  const spentAmount = useMemo(() => {
+    if (!transactionsByDate) return 0;
+    let totalExpense = 0;
+    transactionsByDate.forEach((transactionByDate: TransactionByDate) => {
+      transactionByDate.details.forEach((detail: TransactionDetail) => {
+        if (detail.type === "EXPENSE") {
+          totalExpense += detail.amount;
+        }
+      });
+    });
+    return totalExpense;
+  }, [transactionsByDate]);
+
+  if (isBudgetLoading || isTransactionsLoading) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>로딩 중...</CardContent>
+      </Card>
+    );
+  }
+  if (isBudgetError || isTransactionsError) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>데이터 로드 중 에러가 발생했습니다.</CardContent>
+      </Card>
+    );
+  }
+
+  if (!budgetData) {
+    return (
+      <Card className="flex flex-col py-6">
+        <CardContent>월 예산이 등록되지 않았습니다.</CardContent>
+      </Card>
+    );
+  }
+
+  const utilizationRate =
+    budgetAmount === 0 ? 0 : Math.floor((spentAmount / budgetAmount) * 100);
+  const barColor = utilizationRate > 100 ? "#dc3545" : "#37cc33";
+
+  const chartData = [
+    { name: "소진율", amount: utilizationRate, fill: barColor },
+  ];
+
+  const endAngle = 90 + (Math.min(utilizationRate, 100) / 100) * -360;
   return (
     <Card className="flex flex-col py-6">
       <CardHeader className="text-md float-left font-medium pb-0">
@@ -78,7 +133,7 @@ export default function DashboardBudgetChart() {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          예산: {goalAmount.toLocaleString()}원
+                          예산: {budgetAmount.toLocaleString()}원
                         </tspan>
                       </text>
                     );

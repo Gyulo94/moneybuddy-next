@@ -3,7 +3,7 @@ import DashboardCategoryChart from "@/components/transactions/chart/dashboard-ca
 import DashboardDailySpendingChart from "@/components/transactions/chart/dashboard-daily-spending-chart";
 import DashboardMethodsPayment from "@/components/transactions/chart/dashboard-methods-payment";
 import DashboardReportWeeklyChart from "@/components/transactions/chart/dashboard-report-weekly-chart";
-import { findTransactionsByMonth } from "@/lib/actions";
+import { findBudget, findTransactionsByMonth } from "@/lib/actions";
 import { getCurrentDate } from "@/lib/hooks";
 import { getQueryClient } from "@/lib/query/provider/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -14,8 +14,8 @@ interface Props {
 
 export default async function Dashboard({ searchParams }: Props) {
   const params = await searchParams;
-  const year = params.year ? Number(params.year) : null;
-  const month = params.month ? Number(params.month) : null;
+  const year = params.year ? Number(params.year) : new Date().getFullYear();
+  const month = params.month ? Number(params.month) : new Date().getMonth() + 1;
 
   const currentDate = getCurrentDate({ year, month });
   const queryClient = await getQueryClient();
@@ -24,6 +24,10 @@ export default async function Dashboard({ searchParams }: Props) {
     queryClient.prefetchQuery({
       queryKey: ["transactions", currentDate],
       queryFn: () => findTransactionsByMonth(currentDate),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["budget", { year, month }],
+      queryFn: () => findBudget(year, month),
     }),
   ]);
   const state = dehydrate(queryClient);
