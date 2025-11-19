@@ -12,8 +12,6 @@ import {
   CreditCardIcon,
   LayoutDashboardIcon,
   ReceiptTextIcon,
-  SettingsIcon,
-  TagIcon,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -40,16 +38,16 @@ export default function NavMain() {
       href: "/accounts",
       icon: CreditCardIcon,
     },
-    {
-      label: "카테고리/태그",
-      href: "/categories",
-      icon: TagIcon,
-    },
-    {
-      label: "설정",
-      href: "/settings",
-      icon: SettingsIcon,
-    },
+    // {
+    //   label: "카테고리/태그",
+    //   href: "/categories",
+    //   icon: TagIcon,
+    // },
+    // {
+    //   label: "설정",
+    //   href: "/settings",
+    //   icon: SettingsIcon,
+    // },
   ];
   return (
     <>

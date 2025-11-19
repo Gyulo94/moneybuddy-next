@@ -9,7 +9,7 @@ export default function MonthlyBudget() {
   const [{ year, month }] = useDateFilters();
   const safeYear = year ?? new Date().getFullYear();
   const safeMonth = month ?? new Date().getMonth() + 1;
-  const { data } = useFindBudget(safeYear, safeMonth);
+  const { data, isLoading } = useFindBudget(safeYear, safeMonth);
 
   const formatAmount = (value: number) => {
     if (value >= 10000) {
@@ -28,6 +28,8 @@ export default function MonthlyBudget() {
               {formatAmount(data.amount)}
             </span>
           </p>
+        ) : isLoading ? (
+          <p>월 예산을 가져오는 중입니다.</p>
         ) : (
           <p>월 예산을 등록해주세요.</p>
         )}
