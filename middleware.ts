@@ -5,7 +5,13 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const session = !!req.auth;
 
-  const protectedPaths = [/\/dashboard/];
+  const protectedPaths = [
+    /\/dashboard/,
+    /\/transactions/,
+    /\/calendars/,
+    /\/accounts/,
+    /\/settings/,
+  ];
 
   if (!session && protectedPaths.some((p) => p.test(pathname))) {
     return NextResponse.redirect(new URL("/login", req.url));
