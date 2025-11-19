@@ -20,7 +20,6 @@ export default function TransactionsDateList() {
   const currentDate = getCurrentDate({ year, month });
 
   const { data: rawTransactionsData } = useFindTransactionsByMonth(currentDate);
-  console.log(rawTransactionsData);
 
   const { value, handleNavigate } = useTransactionNavigation(
     new Date(currentDate)

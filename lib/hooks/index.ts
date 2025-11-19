@@ -1,6 +1,6 @@
 export { useGenerateCalendar } from "./use-calendar";
 export { useConfirm } from "./use-confirm";
-export { getCurrentDate, useDateFilters } from "./use-date-filter";
+export { getCurrentDate, useDateFilters } from "./use-filter";
 export { useFilteredIssuers } from "./use-filtered-issuers";
 export { useIsMobile } from "./use-mobile";
 export {

@@ -12,12 +12,13 @@ import MonthlyBudget from "../../budget/monthly-budget";
 import NavMain from "./nav-main";
 
 interface Props {
-  searchParams: Promise<{ year?: string; month?: string }>;
+  searchParams?: Promise<{ year?: string; month?: string } | undefined>;
 }
 
 export async function AppSidebar({ searchParams }: Props) {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
+  const params = searchParams ? (await searchParams) ?? {} : {};
+  const year = params.year ? Number(params.year) : new Date().getFullYear();
+  const month = params.month ? Number(params.month) : new Date().getMonth() + 1;
 
   const queryClient = getQueryClient();
 

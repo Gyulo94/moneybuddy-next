@@ -31,7 +31,6 @@ export default function DashboardDailySpendingChart() {
     month: safeMonth,
     day: safeDay,
   });
-  console.log(safeDay);
 
   const {
     data: budgetData,
@@ -50,8 +49,6 @@ export default function DashboardDailySpendingChart() {
     if (!transactionsByDate) return 0;
 
     const targetMMDD = `${safeMonth}/${safeDay}`;
-
-    console.log(targetMMDD);
 
     const todayData = transactionsByDate.find((dayData: TransactionByDate) => {
       return dayData.date.startsWith(targetMMDD);
@@ -111,7 +108,7 @@ export default function DashboardDailySpendingChart() {
   }
 
   const chartData = [
-    { name: "today", amount: chartDisplayRate, fill: barColor },
+    { name: "오늘", amount: chartDisplayRate, fill: barColor },
   ];
   const endAngle = 180 - (chartDisplayRate / 100) * 180;
 

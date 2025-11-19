@@ -26,6 +26,7 @@ export {
 export {
   createExpense,
   createIncome,
+  deleteTransactions,
   findTransactionById,
   findTransactionsByMonth,
   updateExpense,

@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { Category, EditOpenState, SubCategory } from "../types";
 
 interface CheckedItemsState {
-  checkedItems: { [key: number]: boolean };
+  checkedItems: { [key: string]: boolean };
   checkedCount: number;
-  setCheckedItems: (items: { [key: number]: boolean }) => void;
+  setCheckedItems: (items: { [key: string]: boolean }) => void;
   updateCheckedCount: () => void;
   setDeleteMode: (isDelete: boolean) => void;
   isDeleteMode: boolean;

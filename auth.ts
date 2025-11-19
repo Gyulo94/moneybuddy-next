@@ -10,9 +10,7 @@ async function refreshToken(token: JWT): Promise<JWT> {
   try {
     const response = await axios.post(
       `${SERVER_URL}/auth/refresh`,
-      {
-        oldRefreshToken: token.serverTokens.refreshToken,
-      },
+      {},
       {
         headers: {
           authorization: `Refresh ${token.serverTokens.refreshToken}`,

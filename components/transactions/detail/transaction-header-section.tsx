@@ -1,7 +1,7 @@
 "use client";
 
 import { useDateFilters } from "@/lib/hooks";
-import { getCurrentDate } from "@/lib/hooks/use-date-filter";
+import { getCurrentDate } from "@/lib/hooks/use-filter";
 import { useFindTransactionsByMonth } from "@/lib/query";
 import { IncomeExpenseFilter } from "../header/chart/income-expense-filter";
 import MaximunExpenseDay from "../header/maximum-expense-day";

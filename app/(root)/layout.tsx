@@ -4,13 +4,15 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default async function RootLayout({
   children,
+  searchParams,
 }: Readonly<{
   children: React.ReactNode;
+  searchParams: Promise<{ year?: string; month?: string }>;
 }>) {
   return (
     <SidebarProvider>
       <div className="w-full flex bg-background h-screen">
-        <AppSidebar />
+        <AppSidebar searchParams={searchParams} />
         <main className="w-full overflow-y-auto min-h-screen">
           <div className="flex items-center sticky top-0 z-40 border-b">
             <div className="ml-3">

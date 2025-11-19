@@ -4,6 +4,7 @@ import z from "zod/v3";
 import {
   createExpense,
   createIncome,
+  deleteTransactions,
   findTransactionById,
   findTransactionsByMonth,
   updateExpense,
@@ -88,6 +89,19 @@ export function useUpdateIncome(id?: string) {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["transaction", id] });
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+  return mutation;
+}
+
+export function useDeleteTransactions() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (ids: string[]) => deleteTransactions(ids),
+    onSuccess(data) {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });

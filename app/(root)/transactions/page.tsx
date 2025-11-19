@@ -7,7 +7,7 @@ import { getQueryClient } from "@/lib/query/provider/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 interface Props {
-  searchParams: Promise<{ year?: string; month?: string }>;
+  searchParams: Promise<{ year?: string; month?: string; search?: string }>;
 }
 
 export default async function TransactionsPage({ searchParams }: Props) {
@@ -20,7 +20,7 @@ export default async function TransactionsPage({ searchParams }: Props) {
 
   await Promise.all([
     queryClient.prefetchQuery({
-      queryKey: ["transactions", currentDate],
+      queryKey: ["transactions", { currentDate }],
       queryFn: () => findTransactionsByMonth(currentDate),
     }),
   ]);

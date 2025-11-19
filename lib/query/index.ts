@@ -26,6 +26,7 @@ export {
 export {
   useCreateExpense,
   useCreateIncome,
+  useDeleteTransactions,
   useFindTransactionById,
   useFindTransactionsByMonth,
   useUpdateExpense,

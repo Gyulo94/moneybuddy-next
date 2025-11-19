@@ -5,7 +5,7 @@ import { Transaction, TransactionDetail } from "@/lib/types";
 import { format, startOfMonth } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useFindTransactionsByMonth } from "../query";
-import { useDateFilters } from "./use-date-filter";
+import { useDateFilters } from "./use-filter";
 
 export function useFilteredTransactions(rawData: Transaction[] | undefined) {
   const { showExpense, showIncome } = useFilterStore();

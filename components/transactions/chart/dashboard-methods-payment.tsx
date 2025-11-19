@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDateFilters } from "@/lib/hooks";
-import { getCurrentDate } from "@/lib/hooks/use-date-filter";
+import { getCurrentDate } from "@/lib/hooks/use-filter";
 import { useFindTransactionsByMonth } from "@/lib/query";
 import { TransactionByDate, TransactionDetail } from "@/lib/types";
 import { useMemo, useState } from "react";
