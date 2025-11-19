@@ -63,14 +63,14 @@ export default function DashboardDailySpendingChart() {
       }
     });
     return totalExpense;
-  }, [transactionsByDate, currentDate]);
+  }, [transactionsByDate, safeMonth, safeDay]);
 
   const daysInMonth = new Date(safeYear, safeMonth, 0).getDate();
 
   const goalDailyBudget =
     daysInMonth === 0 ? 0 : Math.floor(budgetAmount / daysInMonth);
 
-  let utilizationRate =
+  const utilizationRate =
     goalDailyBudget === 0 ? 0 : (todaySpentAmount / goalDailyBudget) * 100;
 
   const chartDisplayRate = Math.min(utilizationRate, 100);

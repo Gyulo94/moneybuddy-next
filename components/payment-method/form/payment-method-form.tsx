@@ -85,6 +85,7 @@ export function PaymentMethodForm({
     form,
     filteredIssuers,
     defaultValues.issuerId,
+    defaultValues.accountId,
     id,
     selectedAccountId,
     selectedAccountLogo,

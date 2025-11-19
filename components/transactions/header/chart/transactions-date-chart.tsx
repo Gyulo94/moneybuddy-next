@@ -7,7 +7,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { format } from "date-fns";
-import { useMemo, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 interface Transaction {
@@ -21,10 +21,13 @@ interface Transaction {
 export function TransactionsDateChart({ data }: { data?: Transaction[] }) {
   const KST_OFFSET = 9 * 60;
 
-  const toKstDate = useCallback((d: Date) => {
-    const kst = new Date(d.getTime() + KST_OFFSET * 60 * 1000);
-    return format(kst, "yyyy-MM-dd");
-  }, []);
+  const toKstDate = useCallback(
+    (d: Date) => {
+      const kst = new Date(d.getTime() + KST_OFFSET * 60 * 1000);
+      return format(kst, "yyyy-MM-dd");
+    },
+    [KST_OFFSET]
+  );
 
   const getLast7Days = () => {
     const days: string[] = [];

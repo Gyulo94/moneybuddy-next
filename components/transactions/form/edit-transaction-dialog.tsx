@@ -49,6 +49,7 @@ export default function EditTransactionDialog() {
     date: data?.date || format(new Date(), "yyyy-MM-dd"),
     time: data?.time || "",
     type: data?.type,
+    method: "ACCOUNT",
     tags: data?.tags || [],
     memo: data?.memo || "",
   };
