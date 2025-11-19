@@ -9,13 +9,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import UserAvatar from "@/components/user/user-avatar";
 import { DEFAULT_AVATAR } from "@/lib/constants";
-import { useLogout } from "@/lib/query";
 import { LogOutIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function UserMenu() {
   const { data: session, status } = useSession();
-  const { mutate: logout } = useLogout();
   return (
     <>
       {status === "authenticated" && (
@@ -44,7 +42,7 @@ export default function UserMenu() {
             <Separator />
             <Button
               variant={"ghost"}
-              onClick={() => logout()}
+              onClick={() => signOut()}
               className="w-full text-md text-destructive"
             >
               <LogOutIcon className="size-4" /> 로그아웃
