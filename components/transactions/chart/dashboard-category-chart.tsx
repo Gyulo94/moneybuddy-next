@@ -28,7 +28,8 @@ interface DonutChartData {
 export default function DashboardCategoryChart() {
   const [{ year, month }] = useDateFilters();
   const currentDate = getCurrentDate({ year, month });
-  const { data: transactionsByDate } = useFindTransactionsByMonth(currentDate);
+  const { data: transactionsByDate, isLoading } =
+    useFindTransactionsByMonth(currentDate);
 
   const categoryExpenseForDonutChart: DonutChartData[] = useMemo(() => {
     if (!transactionsByDate) return [];
@@ -75,6 +76,27 @@ export default function DashboardCategoryChart() {
       categoryExpenseForDonutChart[0]
     );
   }, [categoryExpenseForDonutChart]);
+
+  if (isLoading) {
+    return (
+      <Card className="flex justify-center items-center h-[516px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          로딩 중...
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!transactionsByDate || transactionsByDate.length === 0) {
+    return (
+      <Card className="flex justify-center items-center h-[516px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          해당 월의 거래내역이 없습니다.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="flex flex-col py-6">
       <CardHeader className="text-md float-left font-medium pb-0">

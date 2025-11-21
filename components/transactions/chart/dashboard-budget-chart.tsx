@@ -61,17 +61,8 @@ export default function DashboardBudgetChart() {
       </Card>
     );
   }
-  if (isBudgetError || isTransactionsError) {
-    return (
-      <Card className="flex justify-center items-center h-[246px] py-6">
-        <CardContent className="text-muted-foreground font-semibold">
-          데이터 로드 중 에러가 발생했습니다.
-        </CardContent>
-      </Card>
-    );
-  }
 
-  if (!budgetData) {
+  if (!budgetData || !transactionsByDate) {
     return (
       <Card className="flex justify-center items-center h-[246px] py-6">
         <CardContent className="text-muted-foreground font-semibold">

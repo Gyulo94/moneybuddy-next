@@ -19,7 +19,7 @@ export default function MonthlyBudget() {
     return `${value.toLocaleString()} 원`;
   };
   return (
-    <div className="border-b p-4 mb-4">
+    <div className="border-b p-4">
       <div className="flex justify-between items-center text-muted-foreground">
         {data ? (
           <p>

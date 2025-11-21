@@ -11,10 +11,10 @@ export default async function RootLayout({
 }>) {
   return (
     <SidebarProvider>
-      <div className="w-full flex bg-background h-screen">
+      <div className="w-full flex bg-background h-full lg:h-screen">
         <AppSidebar searchParams={searchParams} />
         <main className="w-full overflow-y-auto min-h-screen">
-          <div className="flex items-center sticky top-0 z-40 border-b">
+          <div className="flex items-center sticky top-0 z-40 border-b backdrop-blur-xs">
             <div className="ml-3">
               <SidebarTrigger />
             </div>

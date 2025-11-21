@@ -27,6 +27,7 @@ export default function TransactionsDateList() {
   const { transactions, expandedDates, toggleDetails } =
     useFilteredTransactions(rawTransactionsData);
   const { handleDateCheckboxChange } = useTransitionItemCheckbox();
+  console.log(rawTransactionsData);
 
   return (
     <div className="w-full p-0">
@@ -34,37 +35,48 @@ export default function TransactionsDateList() {
         <CustomToolbar date={value} onNavigate={handleNavigate} />
 
         <div className="w-full rounded-md border shadow-md">
-          {transactions.map((transaction) => {
-            const totalAmount = transaction.details.reduce(
-              (sum: number, detail: TransactionDetail) => {
-                const raw = Number(detail.amount) || 0;
-                const amt =
-                  detail.type === "EXPENSE" ? -Math.abs(raw) : Math.abs(raw);
-                return sum + amt;
-              },
-              0
-            );
+          {transactions.length > 0 ? (
+            transactions.map((transaction) => {
+              const totalAmount = transaction.details.reduce(
+                (sum: number, detail: TransactionDetail) => {
+                  const raw = Number(detail.amount) || 0;
+                  const amt =
+                    detail.type === "EXPENSE" ? -Math.abs(raw) : Math.abs(raw);
+                  return sum + amt;
+                },
+                0
+              );
 
-            return (
-              <div key={transaction.date} className="border-t leading-11">
-                {/* 날짜와 총 금액 */}
-                <TransactionDetailHeader
-                  transaction={transaction}
-                  totalAmount={totalAmount}
-                  handleDateCheckboxChange={handleDateCheckboxChange}
-                  toggleDetails={toggleDetails}
-                />
-                {/* 세부 내역 */}
-                {expandedDates.includes(transaction.date) && (
-                  <ul>
-                    {transaction.details.map((detail: TransactionDetail) => (
-                      <TransactionDetailItem key={detail.id} detail={detail} />
-                    ))}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div key={transaction.date} className="border-t leading-11">
+                  {/* 날짜와 총 금액 */}
+                  <TransactionDetailHeader
+                    transaction={transaction}
+                    totalAmount={totalAmount}
+                    handleDateCheckboxChange={handleDateCheckboxChange}
+                    toggleDetails={toggleDetails}
+                  />
+                  {/* 세부 내역 */}
+                  {expandedDates.includes(transaction.date) && (
+                    <ul>
+                      {transaction.details.map((detail: TransactionDetail) => (
+                        <TransactionDetailItem
+                          key={detail.id}
+                          detail={detail}
+                        />
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="w-full rounded-md border h-50 flex justify-center items-center">
+              <p className="text-muted-foreground font-semibold">
+                해당 월의 거래내역이 없습니다.
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
       <DeleteBottomPanel />

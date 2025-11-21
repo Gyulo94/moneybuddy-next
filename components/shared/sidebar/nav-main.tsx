@@ -51,7 +51,7 @@ export default function NavMain() {
   ];
   return (
     <>
-      <SidebarGroup className="mt-5">
+      <SidebarGroup>
         <SidebarMenu className="space-y-3">
           {NAV_ITEMS.map((nav) => (
             <SidebarMenuItem

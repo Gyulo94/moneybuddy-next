@@ -100,21 +100,19 @@ export default function DashboardReportWeeklyChart() {
 
   if (isLoading)
     return (
-      <Card className="py-6">
-        <CardContent>로딩 중...</CardContent>
-      </Card>
-    );
-  if (isError)
-    return (
-      <Card className="py-6">
-        <CardContent>데이터를 불러오는 중 에러가 발생했습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          로딩 중...
+        </CardContent>
       </Card>
     );
 
   if (!TransactionsByDateData || TransactionsByDateData.length === 0) {
     return (
-      <Card className="py-6">
-        <CardContent>해당 월의 거래 내역이 없습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[246px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          해당 월의 거래 내역이 없습니다.
+        </CardContent>
       </Card>
     );
   }

@@ -68,23 +68,21 @@ export default function DashboardMethodsPayment() {
 
   if (isLoading)
     return (
-      <Card className="flex flex-col flex-grow h-[510px] py-6">
-        <CardContent>로딩 중...</CardContent>
-      </Card>
-    );
-  if (isError)
-    return (
-      <Card className="flex flex-col flex-grow h-[510px] py-6">
-        <CardContent>데이터 로드 중 에러가 발생했습니다.</CardContent>
-      </Card>
-    );
-  if (!TransactionsByDate || TransactionsByDate.length === 0)
-    return (
-      <Card className="flex flex-col flex-grow h-[510px] py-6">
-        <CardContent>해당 월의 데이터가 없습니다.</CardContent>
+      <Card className="flex justify-center items-center h-[510px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          로딩 중...
+        </CardContent>
       </Card>
     );
 
+  if (!TransactionsByDate || TransactionsByDate.length === 0)
+    return (
+      <Card className="flex justify-center items-center h-[510px] py-6">
+        <CardContent className="text-muted-foreground font-semibold">
+          해당 월의 거래내역이 없습니다.
+        </CardContent>
+      </Card>
+    );
   return (
     <Card className="flex flex-col flex-grow h-[510px] py-6">
       <CardHeader className="text-md float-left font-medium pb-0">
